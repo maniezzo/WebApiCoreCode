@@ -64,4 +64,3 @@ In this example:
 ### Browse SQLite Db
 * Install [DB Browser for SQLite](http://sqlitebrowser.org/)
 =======
-Classroom project for business analytics: visual studio code access to webapi based on asp.net core and ado.net core
