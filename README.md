@@ -1,5 +1,5 @@
 # WebApiCoreCode
-Classroom project for business analytics: visual studio code access to webapi based on asp.net core and ado.et core
+Classroom project for business analytics: visual studio code access to webapi based on asp.net core and ado.net core
 
 ## Tecnologies for Use:
 * make sure you have installed [visual studio code](https://code.visualstudio.com/) (and [.NET Core SDK](https://www.microsoft.com/net/download))
