@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 using System.Data.SQLite;
 
 namespace WebApiCoreCode
@@ -29,20 +30,26 @@ namespace WebApiCoreCode
             conn.Close();
         }
 
-        public void getClientName(string sqLiteConnString, string id) {
-            IDbConnection conn = new SQLiteConnection(sqLiteConnString);
-            conn.Open();
-            IDbCommand com = conn.CreateCommand();
-            com.CommandText = "select nome from clienti where id=@id";
-            IDbDataParameter param = com.CreateParameter();
-            param.DbType = DbType.Int32;
-            param.ParameterName = "@id";
-            param.Value = id;
-            com.Parameters.Add(param);
-            using (IDataReader reader = com.ExecuteReader())
+        public void GetCustomerName(string connString, string factory, string id) {
+            DbProviderFactories.RegisterFactory("System.Data.SQLite", "System.Data.SQLite.SQLiteFactory, System.Data.SQLite"/*.SQLiteFactory.Instance*/);
+            DbProviderFactory dbFactory = DbProviderFactories.GetFactory(factory);
+
+            using (DbConnection conn = dbFactory.CreateConnection()) 
             {
-                while (reader.Read()) {
-                    FlushText(this, "nome: " + reader["nome"]);
+                conn.ConnectionString = connString;
+                conn.Open();
+                IDbCommand com = conn.CreateCommand();
+                com.CommandText = "select nome from clienti where id=@id";
+                IDbDataParameter param = com.CreateParameter();
+                param.DbType = DbType.Int32;
+                param.ParameterName = "@id";
+                param.Value = id;
+                com.Parameters.Add(param);
+                using (IDataReader reader = com.ExecuteReader())
+                {
+                    while (reader.Read()) {
+                        FlushText(this, "nome: " + reader["nome"]);
+                    }
                 }
             }
         }
