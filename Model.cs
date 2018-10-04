@@ -30,9 +30,8 @@ namespace WebApiCoreCode
             conn.Close();
         }
 
-        public void GetCustomerName(string connString, string factory, string id) {
-            DbProviderFactories.RegisterFactory("System.Data.SQLite", "System.Data.SQLite.SQLiteFactory, System.Data.SQLite"/*.SQLiteFactory.Instance*/);
-            DbProviderFactory dbFactory = DbProviderFactories.GetFactory(factory);
+        public void GetCustomerName(string connString, string provider, string id) {
+            DbProviderFactory dbFactory = DbProviderFactories.GetFactory(provider);
 
             using (DbConnection conn = dbFactory.CreateConnection()) 
             {
