@@ -29,14 +29,14 @@ namespace WebApiCoreCode
             string sdb = ConfigurationManager.AppSettings["dbServer"];
             switch (sdb)
             { 
-                case "SQLiteConn":  connString = ConfigurationManager.ConnectionStrings["SQLiteConn"].ConnectionString;
-                                    factory = ConfigurationManager.ConnectionStrings["SQLiteConn"].ProviderName;
-                                    break;
-
+                case "SQLiteConn":  
+                    connString = ConfigurationManager.ConnectionStrings["SQLiteConn"].ConnectionString;
+                    factory = ConfigurationManager.ConnectionStrings["SQLiteConn"].ProviderName;
+                    break;
                 case "LocalSqlServConn":
-                                    connString = ConfigurationManager.ConnectionStrings["LocalSqlServConn"].ConnectionString;
-                                    factory = ConfigurationManager.ConnectionStrings["LocalSqlServConn"].ProviderName;
-                                    break;
+                    connString = ConfigurationManager.ConnectionStrings["LocalSqlServConn"].ConnectionString;
+                    factory = ConfigurationManager.ConnectionStrings["LocalSqlServConn"].ProviderName;
+                    break;
             }
         }
 
@@ -57,7 +57,7 @@ namespace WebApiCoreCode
 
         public void getClientName(string id)
         {
-            model.getClientName(connString, id);
+            model.GetCustomerName(connString, factory, id);
         }
     }
 }
