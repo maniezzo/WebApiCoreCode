@@ -39,6 +39,7 @@ namespace WebApiCoreCode
                 case "LocalSqlServConn":
                     connString = config.connectionStrings[1].connectionString;
                     provider = config.connectionStrings[1].providerName;
+                    factory = config.connectionStrings[1].factory;
                     break;
             }
             
