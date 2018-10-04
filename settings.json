@@ -1,0 +1,14 @@
+{
+    "connectionStrings": [
+        {   "name": "SQLiteConn",
+            "connectionString":"Data Source=testDB.db;Version=3;",
+            "providerName":"System.Data.SQLite",
+            "factory":"System.Data.SQLite.SQLiteFactory, System.Data.SQLite"
+        },
+        {   "name": "LocalSqlServConn",
+            "connectionString":"DataSource=(LocalDB)\\MSSQLLocalDB;Initial Catalog = testDb;Integrated Security=True;Connect Timeout=20" ,
+            "providerName":"System.Data.SqlClient"
+        }
+    ],
+    "settings": { "key":"dbServer", "value":"SQLiteConn" }
+}
