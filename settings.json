@@ -1,0 +1,15 @@
+{
+    "connectionStrings": [
+        {   "name": "SQLiteConn",
+            "connectionString":"Data Source=testDB.db;Version=3;",
+            "providerName":"System.Data.SQLite",
+            "factory":"System.Data.SQLite.SQLiteFactory, System.Data.SQLite"
+        },
+        {   "name": "LocalSqlServConn",
+            "connectionString":"Data Source=(LocalDB)\\MSSQLLocalDB;Initial Catalog = testDb;Integrated Security=True;Connect Timeout=20" ,
+            "providerName":"System.Data.SqlClient",
+            "factory":"System.Data.SqlClient.SqlClientFactory, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+        }
+    ],
+    "settings": { "key":"dbServer", "value":"LocalSqlServConn" }
+}

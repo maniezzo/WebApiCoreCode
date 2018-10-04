@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Configuration;
+using Newtonsoft.Json;
+using System.Data.Common;
 
 namespace WebApiCoreCode
 {
@@ -16,28 +18,32 @@ namespace WebApiCoreCode
         Model model = new Model();
         public delegate void viewEventHandler(object sender, string textToWrite); 
         public event viewEventHandler FlushText;
-        /*string connString1 = @"Data Source=testDB.db; Version=3";
-        string providerName1 = "System.Data.SQLite";
-        string connString2 = "Data Source=(sql_server_demo)/MSSQLLocalDB;Initial Catalog = testDb;Integrated Security =True;Connect Timeout=20";
-        string providerName2 = "System.Data.SqlClient";*/
-        string connString = "";
-        string factory = "";
+        string connString;
+        string provider;
+        string factory;
 
 
         public Controller() { 
+
             model.FlushText += controllerViewEventHandler; 
-            string sdb = ConfigurationManager.AppSettings["dbServer"];
-            switch (sdb)
+
+            dynamic config = JsonConvert.DeserializeObject(System.IO.File.ReadAllText("settings.json"));
+
+            switch (config.settings.value.ToString())
             { 
                 case "SQLiteConn":  
-                    connString = ConfigurationManager.ConnectionStrings["SQLiteConn"].ConnectionString;
-                    factory = ConfigurationManager.ConnectionStrings["SQLiteConn"].ProviderName;
+                    connString = config.connectionStrings[0].connectionString;
+                    provider = config.connectionStrings[0].providerName;
+                    factory = config.connectionStrings[0].factory;
                     break;
                 case "LocalSqlServConn":
-                    connString = ConfigurationManager.ConnectionStrings["LocalSqlServConn"].ConnectionString;
-                    factory = ConfigurationManager.ConnectionStrings["LocalSqlServConn"].ProviderName;
+                    connString = config.connectionStrings[1].connectionString;
+                    provider = config.connectionStrings[1].providerName;
+                    factory = config.connectionStrings[1].factory;
                     break;
             }
+            
+            DbProviderFactories.RegisterFactory(provider, factory);
         }
 
         private void controllerViewEventHandler(object sender, string textToWrite)
@@ -57,7 +63,7 @@ namespace WebApiCoreCode
 
         public void getClientName(string id)
         {
-            model.GetCustomerName(connString, factory, id);
+            model.GetCustomerName(connString, provider, id);
         }
     }
 }
