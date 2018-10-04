@@ -16,18 +16,22 @@ namespace WebApiCoreCode
                 FlushText(this, $"i={i}");
         }
 
-        public void goQuery(string sqLiteConnString, string query) {
-            IDbConnection conn = new SQLiteConnection(sqLiteConnString);
-            conn.Open();
-            IDbCommand com = conn.CreateCommand();
-            com.CommandText = query;
-            IDataReader reader = com.ExecuteReader();
-            while (reader.Read())
+        public void goQuery(string connString, string provider, string query) {
+            DbProviderFactory dbFactory = DbProviderFactories.GetFactory(provider);
+
+            using (DbConnection conn = dbFactory.CreateConnection()) 
             {
-                FlushText(this, reader[0] + " " + reader[1]);
+                conn.ConnectionString = connString;
+                conn.Open();
+                IDbCommand com = conn.CreateCommand();
+                com.CommandText = query;
+                IDataReader reader = com.ExecuteReader();
+                while (reader.Read())
+                {
+                    FlushText(this, reader[0] + " " + reader[1]);
+                }
+                reader.Close();
             }
-            reader.Close();
-            conn.Close();
         }
 
         public void GetCustomerName(string connString, string provider, string id) {

@@ -58,7 +58,7 @@ namespace WebApiCoreCode
 
         public void goQuery(string query)
         {
-            model.goQuery(connString, query);
+            model.goQuery(connString, provider, query);
         }
 
         public void getClientName(string id)
