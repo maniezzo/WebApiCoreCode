@@ -18,17 +18,24 @@ namespace WebApiCoreCode
         }
 
         public void manage(string userInput) {
-            if (userInput == "start") {
-                doSomething(this, new EventArgs());
-            } else if (userInput == "go query") {
-                Console.Write("Insert a query: ");
-                var query = Console.ReadLine();
-                goQuery(query);
-            } else if (userInput == "get client name")
+            switch (userInput) 
             {
-                Console.Write("Insert the id: ");
-                var id = Console.ReadLine();
-                getClientName(id);
+                case "start": 
+                    doSomething(this, new EventArgs());
+                    break;
+                case "go query":
+                    Console.Write("Insert a query: ");
+                    var query = Console.ReadLine();
+                    goQuery(query);
+                    break;
+                case "get client name":
+                    Console.Write("Insert the id: ");
+                    var id = Console.ReadLine();
+                    getClientName(id);
+                    break;
+                case "exit":
+                    Environment.Exit(0);
+                    break;
             }
         }
 
