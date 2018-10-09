@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using System.Configuration;
 using Newtonsoft.Json;
 using System.Data.Common;
 
@@ -15,7 +9,7 @@ namespace WebApiCoreCode
 {
     public class Controller
     {
-        Model model = new Model();
+        AbstractModel model;
         public delegate void viewEventHandler(object sender, string textToWrite); 
         public event viewEventHandler FlushText;
         string connString;
@@ -25,11 +19,22 @@ namespace WebApiCoreCode
 
         public Controller() { 
 
-            model.FlushText += controllerViewEventHandler; 
 
             dynamic config = JsonConvert.DeserializeObject(System.IO.File.ReadAllText("settings.json"));
 
-            switch (config.settings.value.ToString())
+            switch(config.settings.strategy.ToString())
+            {
+                case "Factory":
+                    model = new Model();
+                    break;
+                case "ORM":
+                    model = new ModelEF();
+                    break;
+            }
+
+            model.FlushText += controllerViewEventHandler; 
+
+            switch (config.settings.dbServer.ToString())
             { 
                 case "SQLiteConn":  
                     connString = config.connectionStrings[0].connectionString;
@@ -41,9 +46,19 @@ namespace WebApiCoreCode
                     provider = config.connectionStrings[1].providerName;
                     factory = config.connectionStrings[1].factory;
                     break;
+                case "RemoteSqlServConn":
+                    connString = config.connectionStrings[2].connectionString;
+                    provider = config.connectionStrings[2].providerName;
+                    factory = config.connectionStrings[2].factory;
+                    break;
             }
             
             DbProviderFactories.RegisterFactory(provider, factory);
+        }
+
+        public void GetDescr()
+        {
+            model.GetDescr(provider, connString);
         }
 
         private void controllerViewEventHandler(object sender, string textToWrite)
@@ -54,11 +69,6 @@ namespace WebApiCoreCode
         public void doSomething()
         { 
             model.doSomething();
-        }
-
-        public void goQuery(string query)
-        {
-            model.goQuery(connString, provider, query);
         }
 
         public void getClientName(string id)
