@@ -26,11 +26,25 @@ In this example:
     ```sh
     $ dotnet run
     ```
+
+### Use of json instead of app.config
+
+In general:
+* In Visual Studio classic we use app.config to set all dependencies.
+* In Visual Studio Core we use file 'setting.json' to resolve all dependencies. 
+
+In our case:
+* With 'connectionStrings' we define databases (SQLite, local SQLServer and Remote SQLServer). 
+* With 'settings' we choose the specific database to connect and the mapping's method.
+
+In the Controller constructor we check the current field of settings and apply the chosen method.
+
+
 ## Extras
 
 ### Run SqlServer on Unix OS
 
-* install [Docker](https://www.docker.com/get-started) and [SQL Operations Studio](https://database.guide/what-is-sql-operations-studio-sqlops/)
+* install [Docker](https://www.docker.com/get-started) and [SQL Operations Studio](https://docs.microsoft.com/en-us/sql/sql-operations-studio/download)
 * increase docker memory: 
     * select Preferences from the little Docker icon in the top menu
     * slide the memory slider up to at least 4GB
@@ -63,5 +77,6 @@ In this example:
     
 ### Browse SQLite Db
 * Install [DB Browser for SQLite](http://sqlitebrowser.org/)
-=======
-Classroom project for business analytics: visual studio code access to webapi based on asp.net core and ado.net core
+
+
+

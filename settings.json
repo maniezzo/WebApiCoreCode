@@ -1,17 +1,26 @@
 {
     "connectionStrings": [
         {   "name": "SQLiteConn",
-            "connectionString":"Data Source=testDB.db;Version=3;",
+            "connectionString":"Data Source=testDB.db;",
             "providerName":"System.Data.SQLite",
             "factory":"System.Data.SQLite.SQLiteFactory, System.Data.SQLite"
         },
         {   "name": "LocalSqlServConn",
-            "connectionString":"Data Source=127.0.0.1; Initial Catalog = testDb;User ID=sa;Password=reallyStrongPwd123" ,
+            //Windows connection string
+            //"connectionString":"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog = testDb;Integrated Security=True",
+            //Non Windows or Docker connection string
+            "connectionString":"Data Source=127.0.0.1;Initial Catalog = testDb;User ID=sa;Password=reallyStrongPwd123",
+            "providerName":"System.Data.SqlClient",
+            "factory":"System.Data.SqlClient.SqlClientFactory, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+        },
+        {   "name": "RemoteSqlServConn",
+            "connectionString":"Data Source=137.204.74.181;Initial Catalog = testDb;User ID=studSSD;Password=studSSD",
             "providerName":"System.Data.SqlClient",
             "factory":"System.Data.SqlClient.SqlClientFactory, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
         }
     ],
-    "settings": { "key":"dbServer", "value":"LocalSqlServConn" }
+    "settings": { 
+        "dbServer":"RemoteSqlServConn",
+        "strategy":"ORM" //"Factory", "ORM"
+    }
 }
-//If you are using Windows the connection string in the LocalSqlServConn case is: "Data Source=(LocalDB)\\MSSQLLocalDB;Initial Catalog = testDb;Integrated Security=True;Connect Timeout=20" ,
-//If you are using docker you might change the credentials in the current connectionString

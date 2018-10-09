@@ -2,39 +2,13 @@
 using System.Data;
 using System.Data.Common;
 using System.Data.SQLite;
+using static WebApiCoreCode.DBContext;
 
 namespace WebApiCoreCode
 {
-    public class Model
+    public class Model: AbstractModel
     {
-        public delegate void viewEventHandler(object sender, string textToWrite);
-        public event viewEventHandler FlushText;
-
-        public void doSomething()
-        {
-            for (int i = 0; i < 10; i++) 
-                FlushText(this, $"i={i}");
-        }
-
-        public void goQuery(string connString, string provider, string query) {
-            DbProviderFactory dbFactory = DbProviderFactories.GetFactory(provider);
-
-            using (DbConnection conn = dbFactory.CreateConnection()) 
-            {
-                conn.ConnectionString = connString;
-                conn.Open();
-                IDbCommand com = conn.CreateCommand();
-                com.CommandText = query;
-                IDataReader reader = com.ExecuteReader();
-                while (reader.Read())
-                {
-                    FlushText(this, reader[0] + " " + reader[1]);
-                }
-                reader.Close();
-            }
-        }
-
-        public void GetCustomerName(string connString, string provider, string id) {
+        public override void GetCustomerName(string connString, string provider, string id) {
             DbProviderFactory dbFactory = DbProviderFactories.GetFactory(provider);
 
             using (DbConnection conn = dbFactory.CreateConnection()) 
@@ -51,7 +25,25 @@ namespace WebApiCoreCode
                 using (IDataReader reader = com.ExecuteReader())
                 {
                     while (reader.Read()) {
-                        FlushText(this, "nome: " + reader["nome"]);
+                        Flush(this, "nome: " + reader["nome"]);
+                    }
+                }
+            }
+        }
+    
+        public override void GetDescr(string provider,string connString) {
+            DbProviderFactory dbFactory = DbProviderFactories.GetFactory(provider);
+
+            using (DbConnection conn = dbFactory.CreateConnection()) 
+            {
+                conn.ConnectionString = connString;
+                conn.Open();
+                IDbCommand com = conn.CreateCommand();
+                com.CommandText = "select codice from ordini";
+                using (IDataReader reader = com.ExecuteReader())
+                {
+                    while (reader.Read()) {
+                        Flush(this, "codice: " + reader["codice"]);
                     }
                 }
             }
