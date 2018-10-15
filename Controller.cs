@@ -56,9 +56,9 @@ namespace WebApiCoreCode
             DbProviderFactories.RegisterFactory(provider, factory);
         }
 
-        public void GetDescr()
+        public void GetAvgAndVariance()
         {
-            model.GetDescr(provider, connString);
+            model.GetAvgAndVariance(provider, connString);
         }
 
         private void controllerViewEventHandler(object sender, string textToWrite)
