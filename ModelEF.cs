@@ -42,5 +42,15 @@ namespace WebApiCoreCode
                 Flush(this, "Varianza: " + varianza);
             }
         }
+
+        public override void GetSeries(string provider,string connString) {
+            using (var db = new DBContext(provider, connString))
+            {
+                foreach (SerieRecord s in db.Serie)
+                {
+                    Flush(this, s.esempio + "\t" + s.esempio2 + "\t" + s.Passengers + "\t" + s.jewelry);
+                }
+            }
+        }
     }
 }

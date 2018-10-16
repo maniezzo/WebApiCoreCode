@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApiCoreCode 
@@ -9,6 +10,7 @@ namespace WebApiCoreCode
 
         public DbSet<Cliente> Clienti { get; set; }
         public DbSet<Ordine> Ordini { get; set; }
+        public DbSet<SerieRecord> Serie { get; set; }
 
         public DBContext(string provider, string connString) 
         {
@@ -41,6 +43,16 @@ namespace WebApiCoreCode
             public int idcliente { get; set; }
             public int codice { get; set; }
             public string descr { get; set; }
+        }
+
+        public class SerieRecord
+        {
+            [Key]
+            public int time { get; set; }            
+            public int? esempio { get; set; }
+            public double? esempio2 { get; set; }
+            public int? Passengers { get; set; }
+            public int? jewelry { get; set; }
         }
     }
 }

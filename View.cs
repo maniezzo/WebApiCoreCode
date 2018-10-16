@@ -15,7 +15,8 @@ namespace WebApiCoreCode
                 Console.WriteLine("0 - start");
                 Console.WriteLine("1 - get customer name");
                 Console.WriteLine("2 - get orders");
-                Console.WriteLine("3 - exit");
+                Console.WriteLine("3 - get series");
+                Console.WriteLine("4 - exit");
                 Console.Write("Insert an input: ");
                 manage(Console.ReadLine());
             }
@@ -38,14 +39,23 @@ namespace WebApiCoreCode
                 case "2":
                     GetAvgAndVariance();
                     break;
-                case "exit":
+                case "get series":
                 case "3":
+                    GetSeries();
+                    break;
+                case "exit":
+                case "4":
                     Environment.Exit(0);
                     break;
                 default:
                     Console.WriteLine("Invalid input");
                     break;
             }
+        }
+
+        private void GetSeries()
+        {
+            C.GetSeries();
         }
 
         private void GetAvgAndVariance()

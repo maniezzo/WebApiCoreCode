@@ -48,5 +48,10 @@ namespace WebApiCoreCode
                 }
             }
         }
+
+        public override void GetSeries(string provider, string connString)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

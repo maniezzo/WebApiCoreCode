@@ -56,6 +56,11 @@ namespace WebApiCoreCode
             DbProviderFactories.RegisterFactory(provider, factory);
         }
 
+        internal void GetSeries()
+        {
+            model.GetSeries(provider, connString);
+        }
+
         public void GetAvgAndVariance()
         {
             model.GetAvgAndVariance(provider, connString);
