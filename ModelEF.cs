@@ -20,7 +20,7 @@ namespace WebApiCoreCode
             }
         }
     
-        public override void GetDescr(string provider,string connString) {
+        public override void GetAvgAndVariance(string provider,string connString) {
             using (var db = new DBContext(provider, connString))
             {
                 int totale = 0;
@@ -40,6 +40,16 @@ namespace WebApiCoreCode
                 float varianza = totale / (float)db.Ordini.Count();
                 //float varianza = (float)db.Ordini.Average(o => Math.Pow(o.codice - media, 2));
                 Flush(this, "Varianza: " + varianza);
+            }
+        }
+
+        public override void GetSeries(string provider,string connString) {
+            using (var db = new DBContext(provider, connString))
+            {
+                foreach (SerieRecord s in db.Serie)
+                {
+                    Flush(this, s.esempio + "\t" + s.esempio2 + "\t" + s.Passengers + "\t" + s.jewelry);
+                }
             }
         }
     }

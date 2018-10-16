@@ -9,8 +9,9 @@ public abstract class AbstractModel
         
     }
     public abstract void GetCustomerName(string connString, string provider, string id);
-    public abstract void GetDescr(string provider,string connString);
-
+    public abstract void GetAvgAndVariance(string provider,string connString);
+    public abstract void GetSeries(string provider,string connString);
+    
     public void Flush(object o, string s)
     {
         this.FlushText(o, s);

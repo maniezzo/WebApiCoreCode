@@ -31,7 +31,7 @@ namespace WebApiCoreCode
             }
         }
     
-        public override void GetDescr(string provider,string connString) {
+        public override void GetAvgAndVariance(string provider,string connString) {
             DbProviderFactory dbFactory = DbProviderFactories.GetFactory(provider);
 
             using (DbConnection conn = dbFactory.CreateConnection()) 
@@ -47,6 +47,11 @@ namespace WebApiCoreCode
                     }
                 }
             }
+        }
+
+        public override void GetSeries(string provider, string connString)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -11,9 +11,14 @@ namespace WebApiCoreCode
 
         public void play() {
             while (true) {
+                Console.WriteLine("----------------");
+                Console.WriteLine("0 - start");
+                Console.WriteLine("1 - get customer name");
+                Console.WriteLine("2 - get orders");
+                Console.WriteLine("3 - get series");
+                Console.WriteLine("4 - exit");
                 Console.Write("Insert an input: ");
-                var userInput = Console.ReadLine();
-                manage(userInput);
+                manage(Console.ReadLine());
             }
         }
 
@@ -21,25 +26,41 @@ namespace WebApiCoreCode
             switch (userInput) 
             {
                 case "start": 
+                case "0":
                     doSomething(this, new EventArgs());
                     break;
-                case "get client name":
+                case "get customer name":
+                case "1":
                     Console.Write("Insert the id: ");
                     var id = Console.ReadLine();
                     getClientName(id);
                     break;
                 case "get orders":
-                    GetDescr();
+                case "2":
+                    GetAvgAndVariance();
+                    break;
+                case "get series":
+                case "3":
+                    GetSeries();
                     break;
                 case "exit":
+                case "4":
                     Environment.Exit(0);
+                    break;
+                default:
+                    Console.WriteLine("Invalid input");
                     break;
             }
         }
 
-        private void GetDescr()
+        private void GetSeries()
         {
-            C.GetDescr();
+            C.GetSeries();
+        }
+
+        private void GetAvgAndVariance()
+        {
+            C.GetAvgAndVariance();
         }
 
         private void viewEventHandler(object sender, string textToWrite)
@@ -55,7 +76,5 @@ namespace WebApiCoreCode
         private void getClientName(string id) {
             C.getClientName(id);
         }
-
-
     }
 }
