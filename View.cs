@@ -16,7 +16,8 @@ namespace WebApiCoreCode
                 Console.WriteLine("1 - get customer name");
                 Console.WriteLine("2 - get orders");
                 Console.WriteLine("3 - get series");
-                Console.WriteLine("4 - exit");
+                Console.WriteLine("4 - resolve GAP");
+                Console.WriteLine("5 - exit");
                 Console.Write("Insert an input: ");
                 manage(Console.ReadLine());
             }
@@ -43,8 +44,14 @@ namespace WebApiCoreCode
                 case "3":
                     GetSeries();
                     break;
-                case "exit":
+                case "resolve GAP":
                 case "4":
+                    Console.Write("Insert the file name: ");
+                    var name = Console.ReadLine();
+                    SolveGAP(name);
+                    break;
+                case "exit":
+                case "5":
                     Environment.Exit(0);
                     break;
                 default:
@@ -56,6 +63,11 @@ namespace WebApiCoreCode
         private void GetSeries()
         {
             C.GetSeries();
+        }
+
+        private void SolveGAP(string name)
+        {
+            C.solveGAP(name);
         }
 
         private void GetAvgAndVariance()
