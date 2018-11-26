@@ -10,6 +10,7 @@ namespace WebApiCoreCode
     public class Controller
     {
         AbstractModel model;
+        OptimizationModel optimizationModel;
         public delegate void viewEventHandler(object sender, string textToWrite); 
         public event viewEventHandler FlushText;
         string connString;
@@ -19,6 +20,7 @@ namespace WebApiCoreCode
 
         public Controller() { 
 
+            optimizationModel = new OptimizationModel();
 
             dynamic config = JsonConvert.DeserializeObject(System.IO.File.ReadAllText("settings.json"));
 
@@ -79,6 +81,12 @@ namespace WebApiCoreCode
         public void getClientName(string id)
         {
             model.GetCustomerName(connString, provider, id);
+        }
+
+        public void solveGAP(string name)
+        {
+            GeneralizedAssignmentProblem generalizedAssignmentProblem = optimizationModel.readJson(name);
+            Console.WriteLine(generalizedAssignmentProblem.name);
         }
     }
 }
