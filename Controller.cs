@@ -85,8 +85,19 @@ namespace WebApiCoreCode
 
         public void solveGAP(string name)
         {
-            GeneralizedAssignmentProblem generalizedAssignmentProblem = optimizationModel.readJson(name);
-            Console.WriteLine(generalizedAssignmentProblem.name);
+            GeneralizedAssignmentProblem problem = optimizationModel.readJson(name);
+
+            int[] sol = optimizationModel.findSol();
+
+            try 
+            {
+                FlushText(this, optimizationModel.checkSol(sol).ToString());
+            } 
+            catch (Exception e) 
+            {
+                FlushText(this, (e.Message));
+                FlushText(this, String.Join(',', sol));
+            }
         }
     }
 }
