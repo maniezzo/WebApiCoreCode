@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public abstract class AbstractModel
 {
     public delegate void viewEventHandler(object sender, string textToWrite);
@@ -8,9 +10,9 @@ public abstract class AbstractModel
             FlushText(this, $"i={i}");
         
     }
-    public abstract void GetCustomerName(string connString, string provider, string id);
-    public abstract void GetAvgAndVariance(string provider,string connString);
-    public abstract void GetSeries(string provider,string connString);
+    public abstract string GetCustomerName(string connString, string provider, int id);
+    public abstract float[] GetAvgAndVariance(string provider,string connString);
+    public abstract IEnumerable<string> GetSeries(string provider,string connString);
     
     public void Flush(object o, string s)
     {

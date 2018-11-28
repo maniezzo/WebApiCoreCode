@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SQLite;
@@ -8,7 +9,7 @@ namespace WebApiCoreCode
 {
     public class Model: AbstractModel
     {
-        public override void GetCustomerName(string connString, string provider, string id) {
+        public override string GetCustomerName(string connString, string provider, int id) {
             DbProviderFactory dbFactory = DbProviderFactories.GetFactory(provider);
 
             using (DbConnection conn = dbFactory.CreateConnection()) 
@@ -25,14 +26,18 @@ namespace WebApiCoreCode
                 using (IDataReader reader = com.ExecuteReader())
                 {
                     while (reader.Read()) {
-                        Flush(this, "nome: " + reader["nome"]);
+                        return reader["nome"].ToString();
                     }
                 }
             }
+            return "";
         }
     
-        public override void GetAvgAndVariance(string provider,string connString) {
+        public override float[] GetAvgAndVariance(string provider,string connString) {
             DbProviderFactory dbFactory = DbProviderFactories.GetFactory(provider);
+
+            float[] result = new float[2];
+            int count = 0;
 
             using (DbConnection conn = dbFactory.CreateConnection()) 
             {
@@ -42,14 +47,28 @@ namespace WebApiCoreCode
                 com.CommandText = "select codice from ordini";
                 using (IDataReader reader = com.ExecuteReader())
                 {
+                    int totale = 0;
+
                     while (reader.Read()) {
-                        Flush(this, "codice: " + reader["codice"]);
+                        totale += int.Parse(reader["codice"].ToString());
+                        count++;
                     }
+                    result[0] = totale / (float)count;
                 }
+                using (IDataReader reader = com.ExecuteReader())
+                {
+                    int totale = 0;
+                    while (reader.Read())
+                    {
+                        totale += (int)Math.Pow(int.Parse(reader["codice"].ToString()) - result[0], 2);
+                    }
+                    result[1] = totale / (float)count;
+                }
+                return result;
             }
         }
 
-        public override void GetSeries(string provider, string connString)
+        public override IEnumerable<string> GetSeries(string provider, string connString)
         {
             throw new NotImplementedException();
         }

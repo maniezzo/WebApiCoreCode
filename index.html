@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Progetto SSD</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+</head>
+<body onload="init()">
+    <div>
+        <button onclick="findAll();">Read All</button>
+    </div>
+    <script>
+
+        function init() {
+            //alert('init')
+        }
+
+        function findAll(){
+            $.ajax({
+                url: "https://localhost:5001/api/clienti/1",
+                type: "GET",
+                contentType: "application/json",
+                success: function (result) {
+                    var elem = JSON.parse(result)
+                    readResult(result);
+                },
+                error: function (xhr, status, p3, p4) {
+                    var err = "Error " + " " + status + " " + p3;
+                    if (xhr.responseText && xhr.responseText[0] == "{")
+                        err = JSON.parse(xhr.responseText).message;
+                    alert(err);
+                }
+            });
+        }
+
+        function readResult(elem) {
+            alert(elem)
+        }
+        
+    </script>
+</body>
+</html>

@@ -58,14 +58,14 @@ namespace WebApiCoreCode
             DbProviderFactories.RegisterFactory(provider, factory);
         }
 
-        internal void GetSeries()
+        public IEnumerable<string> GetSeries()
         {
-            model.GetSeries(provider, connString);
+            return model.GetSeries(provider, connString);
         }
 
-        public void GetAvgAndVariance()
+        public float[] GetAvgAndVariance()
         {
-            model.GetAvgAndVariance(provider, connString);
+            return model.GetAvgAndVariance(provider, connString);
         }
 
         private void controllerViewEventHandler(object sender, string textToWrite)
@@ -78,25 +78,24 @@ namespace WebApiCoreCode
             model.doSomething();
         }
 
-        public void getClientName(string id)
+        public string getClientName(int id)
         {
-            model.GetCustomerName(connString, provider, id);
+            return model.GetCustomerName(connString, provider, id);
         }
 
-        public void solveGAP(string name)
+        public string solveGAP(string name)
         {
-            GeneralizedAssignmentProblem problem = optimizationModel.readJson(name);
+            GeneralizedAssignmentProblem problem = optimizationModel.readJson("problems/"+name);
 
             int[] sol = optimizationModel.findSol();
 
             try 
             {
-                FlushText(this, optimizationModel.checkSol(sol).ToString());
+                return optimizationModel.checkSol(sol).ToString();
             } 
-            catch (Exception e) 
+            catch (Exception e)
             {
-                FlushText(this, (e.Message));
-                FlushText(this, String.Join(',', sol));
+                return e.Message +'\n' + String.Join(',', sol);
             }
         }
     }

@@ -7,9 +7,9 @@
         },
         {   "name": "LocalSqlServConn",
             //Windows connection string
-            //"connectionString":"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog = testDb;Integrated Security=True",
+            "connectionString":"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog = testDb;Integrated Security=True",
             //Non Windows or Docker connection string
-            "connectionString":"Data Source=127.0.0.1;Initial Catalog = testDb;User ID=sa;Password=reallyStrongPwd123",
+            //"connectionString":"Data Source=127.0.0.1;Initial Catalog = testDb;User ID=sa;Password=reallyStrongPwd123",
             "providerName":"System.Data.SqlClient",
             "factory":"System.Data.SqlClient.SqlClientFactory, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
         },
@@ -20,7 +20,7 @@
         }
     ],
     "settings": { 
-        "dbServer":"RemoteSqlServConn",
-        "strategy":"ORM" //"Factory", "ORM"
+        "dbServer":"LocalSqlServConn",
+        "strategy":"Factory" //"Factory", "ORM"
     }
 }
