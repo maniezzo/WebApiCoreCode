@@ -20,7 +20,7 @@
         }
     ],
     "settings": { 
-        "dbServer":"LocalSqlServConn",
-        "strategy":"Factory" //"Factory", "ORM"
+        "dbServer":"SQLiteConn",
+        "strategy":"ORM" //"Factory", "ORM"
     }
 }

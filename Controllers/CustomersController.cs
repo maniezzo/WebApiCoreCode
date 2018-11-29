@@ -11,7 +11,7 @@ namespace WebAPI.Controllers
     public class CustomersController : ControllerBase
     {
         WebApiCoreCode.Controller controller = new WebApiCoreCode.Controller();
-        // GET api/values/5
+        // GET api/customers/3
         [HttpGet("{id}")]
         public ActionResult<string> Get(int id)
         {

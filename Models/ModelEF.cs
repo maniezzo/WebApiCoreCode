@@ -15,8 +15,8 @@ namespace WebApiCoreCode
             {
                 foreach (Cliente c in db.Clienti)
                 {
-                    if (c.id.ToString().Equals(id))
-                        return c.nome.ToString();
+                    if (c.id == id)
+                        return c.nome;
                 }
             }
             return "";
