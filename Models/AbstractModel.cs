@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 public abstract class AbstractModel
@@ -18,4 +19,8 @@ public abstract class AbstractModel
     {
         this.FlushText(o, s);
     }
+
+    public abstract bool addCustomer(Customer value);
+    public abstract bool updateCustomer(int id, Customer value);
+    public abstract bool deleteCustomer(int id);
 }

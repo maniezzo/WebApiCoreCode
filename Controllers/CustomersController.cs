@@ -16,28 +16,38 @@ namespace WebAPI.Controllers
         [HttpGet("{id}")]
         public ActionResult<string> Get(int id)
         {
-            return controller.getClientName(id);
+            return JsonConvert.SerializeObject(controller.getCustomerName(id));
         }
 
         // POST api/customers
         [HttpPost]
-        public string Post([FromBody] Customer value)
+        public ActionResult<string> Post([FromBody] Customer value)
         {
-            return JsonConvert.SerializeObject("name: " + value.Name + "}");
+            if (controller.addCustomer(value))
+                return JsonConvert.SerializeObject("Customer created");
+            else
+                return JsonConvert.SerializeObject("Error during creation");
         }
 
         // PUT api/customers/5
-        [HttpPut("{name}")]
-        public string Put(string name, [FromBody] Customer value)
+        [HttpPut("{id}")]
+        public ActionResult<string> Put(int id, [FromBody] Customer value)
         {
-            return JsonConvert.SerializeObject("PUT key: " + name + ", name: " + value.Name);
+            if (controller.updateCustomer(id, value))
+                return JsonConvert.SerializeObject("Customer updated");
+            else
+                return JsonConvert.SerializeObject("Error during update");
         }
 
         // DELETE api/customers/pippo
-        [HttpDelete("{name}")]
-        public string Delete(string name)
+        [HttpDelete("{id}")]
+        [ActionName("deleteUser")]
+        public ActionResult<string> Delete(int id)
         {
-            return JsonConvert.SerializeObject("DELETE name: " + name);
+            if (controller.deleteCustomer(id))
+                return JsonConvert.SerializeObject("Customer deleted");
+            else
+                return JsonConvert.SerializeObject("Error during delete");
         }
     }
 }

@@ -7,27 +7,24 @@
 </head>
 <body>
     <div>
-        <button onclick="findAll();">Read All</button>
+        <button onclick="find(3);">Get</button>
         <button onclick="post();">Post</button>
-        <button onclick="put();">Put</button>
-        <button onclick="del();">Delete</button>
+        <button onclick="put(3);">Put</button>
+        <button onclick="del(3);">Delete</button>
     </div>
     <script>
 
-        function findAll(){
+        function find(id){
             $.ajax({
-                url: "https://localhost:5001/api/customers/1",
+                url: "https://localhost:5001/api/customers/" + id,
                 type: "GET",
                 contentType: "application/json",
                 success: function (result) {
                     var elem = JSON.parse(result)
                     readResult(result);
                 },
-                error: function (xhr, status, p3, p4) {
-                    var err = "Error " + " " + status + " " + p3;
-                    if (xhr.responseText && xhr.responseText[0] == "{")
-                        err = JSON.parse(xhr.responseText).message;
-                    alert(err);
+                error: function (err) {
+                    alert(JSON.stringify(err));
                 }
             });
         }
@@ -37,6 +34,7 @@
                 url: "https://localhost:5001/api/customers",
                 type: "POST",
                 data: JSON.stringify({
+                    id: 6,
                     Name: "Foo"
                 }),
                 dataType: "json",
@@ -45,16 +43,17 @@
                     alert(result);
                 },
                 error: function (err) {
-                    alert(err);
+                    alert(JSON.stringify(err));
                 }
             });
         }
 
-        function put(){
+        function put(id){
             $.ajax({
-                url: "https://localhost:5001/api/customers/giovanni",
+                url: "https://localhost:5001/api/customers/" + id,
                 type: "PUT",
                 data: JSON.stringify({
+                    id: id,
                     Name: "Giovanni"
                 }),
                 dataType: "json",
@@ -63,21 +62,21 @@
                     alert(result);
                 },
                 error: function (err) {
-                    alert(err);
+                    alert(JSON.stringify(err));
                 }
             });
         }
 
-        function del(){
+        function del(id){
             $.ajax({
-                url: "https://localhost:5001/api/customers/giovanni",
+                url: "https://localhost:5001/api/customers/" + id,
                 type: "DELETE",
                 contentType: "application/json",
                 success: function (result) {
                     alert(result);
                 },
                 error: function (err) {
-                    alert(err);
+                    alert(JSON.stringify(err));
                 }
             });
         }

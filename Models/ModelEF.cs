@@ -8,6 +8,7 @@ using static WebApiCoreCode.DBContext;
 
 namespace WebApiCoreCode
 {
+
     public class ModelEF: AbstractModel
     {
         public override string GetCustomerName(string connString, string provider, int id) {
@@ -21,6 +22,21 @@ namespace WebApiCoreCode
             }
             return "";
         }
+        public override bool addCustomer(Customer value)
+        {
+            return true;
+        }
+
+        public override bool updateCustomer(int id, Customer value)
+        {
+            return true;
+        }
+
+        public override bool deleteCustomer(int id)
+        {
+            return true;
+        }
+
     
         public override float[] GetAvgAndVariance(string provider,string connString) {
             using (var db = new DBContext(provider, connString))
@@ -54,7 +70,7 @@ namespace WebApiCoreCode
             {
                 foreach (SerieRecord s in db.Serie)
                 {
-                    result.Add(s.esempio + "\t" + s.esempio2 + "\t" + s.Passengers + "\t" + s.jewelry);
+                    result.Add(s.esempio + " " + s.esempio2 + " " + s.Passengers + " " + s.jewelry);
                 }
             }
             return result;

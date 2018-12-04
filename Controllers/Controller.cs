@@ -58,6 +58,19 @@ namespace WebApiCoreCode
             DbProviderFactories.RegisterFactory(provider, factory);
         }
 
+        public bool addCustomer(Customer value)
+        {
+            return model.addCustomer(value);
+        }
+        public bool updateCustomer(int id, Customer value)
+        {
+            return model.updateCustomer(id, value);
+        }
+        internal bool deleteCustomer(int id)
+        {
+            return model.deleteCustomer(id);
+        }
+
         public IEnumerable<string> GetSeries()
         {
             return model.GetSeries(provider, connString);
@@ -78,9 +91,9 @@ namespace WebApiCoreCode
             model.doSomething();
         }
 
-        public string getClientName(int id)
+        public string getCustomerName(int id)
         {
-            return JsonConvert.SerializeObject(model.GetCustomerName(connString, provider, id));
+            return model.GetCustomerName(connString, provider, id);
         }
 
         public string solveGAP(string name)

@@ -72,5 +72,20 @@ namespace WebApiCoreCode
         {
             throw new NotImplementedException();
         }
+
+        public override bool addCustomer(Customer value)
+        {
+            return true;
+        }
+
+        public override bool updateCustomer(int id, Customer value)
+        {
+            return true;
+        }
+
+        public override bool deleteCustomer(int id)
+        {
+            return true;
+        }
     }
 }
