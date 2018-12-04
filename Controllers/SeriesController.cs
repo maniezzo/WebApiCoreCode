@@ -15,9 +15,9 @@ namespace WebAPI.Controllers
         WebApiCoreCode.Controller controller = new WebApiCoreCode.Controller();
         // GET api/series
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public ActionResult<string> Get()
         {
-            return controller.GetSeries().ToArray();
+            return JsonConvert.SerializeObject(controller.GetSeries().ToArray());
         }
     }
 }

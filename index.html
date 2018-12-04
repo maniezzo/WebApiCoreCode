@@ -8,6 +8,7 @@
 <body onload="init()">
     <div>
         <button onclick="findAll();">Read All</button>
+        <button onclick="postSomething(3);">Post</button>
     </div>
     <script>
 
@@ -17,7 +18,7 @@
 
         function findAll(){
             $.ajax({
-                url: "https://localhost:5001/api/clienti/1",
+                url: "https://localhost:5001/api/customers/1",
                 type: "GET",
                 contentType: "application/json",
                 success: function (result) {
@@ -31,6 +32,40 @@
                     alert(err);
                 }
             });
+        }
+
+        function post(){
+            $.ajax({
+                url: "https://localhost:5001/api/customers",
+                type: "POST",
+                data: {
+                    "Name": "Foo"
+                },
+                //dataType: "json",
+                contentType: "application/json",
+                success: function (result) {
+                    alert("success " + result);
+                },
+                error: function (xhr, status, p3, p4) {
+                    var err = "Error " + " " + status + " " + p3;
+                    if (xhr.responseText && xhr.responseText[0] == "{")
+                        err = JSON.parse(xhr.responseText).message;
+                    alert("error " + err);
+                }
+            });
+        }
+        function postSomething(id) 
+        {  
+            var options  = {};
+            options.url  = "https://localhost:5001/api/customers";
+            options.type = "POST";
+            options.data = "{\"Name\":"+id+"}";
+            options.dataType    = "json";
+            options.contentType = "application/json";
+            options.success = function(msg) { alert(msg); };
+            options.error   = function(err) { alert(err.statusText
+            ); };
+            $.ajax(options); // chiamata http
         }
 
         function readResult(elem) {

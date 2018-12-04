@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace WebAPI.Controllers
 {
@@ -16,6 +17,13 @@ namespace WebAPI.Controllers
         public ActionResult<string> Get(int id)
         {
             return controller.getClientName(id);
+        }
+
+        // POST api/customers
+        [HttpPost]
+        public string Post([FromBody] Customer value)
+        {
+            return JsonConvert.SerializeObject("{\"name\":\" " + value.Name + "\"}");
         }
     }
 }

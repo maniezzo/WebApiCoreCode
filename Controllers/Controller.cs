@@ -80,7 +80,7 @@ namespace WebApiCoreCode
 
         public string getClientName(int id)
         {
-            return model.GetCustomerName(connString, provider, id);
+            return JsonConvert.SerializeObject(model.GetCustomerName(connString, provider, id));
         }
 
         public string solveGAP(string name)
