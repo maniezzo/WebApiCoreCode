@@ -23,7 +23,21 @@ namespace WebAPI.Controllers
         [HttpPost]
         public string Post([FromBody] Customer value)
         {
-            return JsonConvert.SerializeObject("{\"name\":\" " + value.Name + "\"}");
+            return JsonConvert.SerializeObject("name: " + value.Name + "}");
+        }
+
+        // PUT api/customers/5
+        [HttpPut("{name}")]
+        public string Put(string name, [FromBody] Customer value)
+        {
+            return JsonConvert.SerializeObject("PUT key: " + name + ", name: " + value.Name);
+        }
+
+        // DELETE api/customers/pippo
+        [HttpDelete("{name}")]
+        public string Delete(string name)
+        {
+            return JsonConvert.SerializeObject("DELETE name: " + name);
         }
     }
 }
