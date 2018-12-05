@@ -4,6 +4,8 @@ using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data.Common;
+using System.Linq;
+using static WebApiCoreCode.DBContext;
 
 namespace WebApiCoreCode
 {
@@ -11,6 +13,8 @@ namespace WebApiCoreCode
     {
         AbstractModel model;
         OptimizationModel optimizationModel;
+        ForecastingModel forecastingModel;
+
         public delegate void viewEventHandler(object sender, string textToWrite); 
         public event viewEventHandler FlushText;
         string connString;
@@ -56,16 +60,36 @@ namespace WebApiCoreCode
             }
             
             DbProviderFactories.RegisterFactory(provider, factory);
+            this.forecastingModel = new ForecastingModel(model.GetSeries(provider, connString).Select(x => int.Parse(x)).ToList());
         }
 
-        internal void GetSeries()
+        public bool addCustomer(Cliente value)
         {
-            model.GetSeries(provider, connString);
+            return model.addCustomer(connString, provider,value);
+        }
+        public bool updateCustomer(int id, Cliente value)
+        {
+            return model.updateCustomer(connString, provider,id, value);
+        }
+        internal bool deleteCustomer(int id)
+        {
+            return model.deleteCustomer(connString, provider,id);
         }
 
-        public void GetAvgAndVariance()
+        public IEnumerable<string> GetSeries()
         {
-            model.GetAvgAndVariance(provider, connString);
+            return model.GetSeries(provider, connString);
+        }
+
+        public IEnumerable<String> GetMA() 
+        {
+            this.forecastingModel.applyMA(12);
+            return this.forecastingModel.Baseline.Select(x => x.ToString());
+        }
+
+        public float[] GetAvgAndVariance()
+        {
+            return model.GetAvgAndVariance(provider, connString);
         }
 
         private void controllerViewEventHandler(object sender, string textToWrite)
@@ -78,15 +102,25 @@ namespace WebApiCoreCode
             model.doSomething();
         }
 
-        public void getClientName(string id)
+        public string getCustomerName(int id)
         {
-            model.GetCustomerName(connString, provider, id);
+            return model.GetCustomerName(connString, provider, id);
         }
 
-        public void solveGAP(string name)
+        public string solveGAP(string name)
         {
-            GeneralizedAssignmentProblem generalizedAssignmentProblem = optimizationModel.readJson(name);
-            Console.WriteLine(generalizedAssignmentProblem.name);
+            GeneralizedAssignmentProblem problem = optimizationModel.readJson("problems/"+name);
+
+            int[] sol = optimizationModel.findSol();
+
+            try 
+            {
+                return optimizationModel.checkSol(sol).ToString();
+            } 
+            catch (Exception e)
+            {
+                return e.Message +'\n' + String.Join(',', sol);
+            }
         }
     }
 }

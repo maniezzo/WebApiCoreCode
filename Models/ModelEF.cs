@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SQLite;
@@ -9,20 +10,23 @@ namespace WebApiCoreCode
 {
     public class ModelEF: AbstractModel
     {
-        public override void GetCustomerName(string connString, string provider, string id) {
+        public override string GetCustomerName(string connString, string provider, int id) {
             using (var db = new DBContext(provider, connString))
             {
                 foreach (Cliente c in db.Clienti)
                 {
-                    if (c.id.ToString().Equals(id))
-                        Flush(this, c.nome.ToString());
+                    if (c.id == id)
+                        return c.nome;
                 }
             }
+            return "";
         }
     
-        public override void GetAvgAndVariance(string provider,string connString) {
+        public override float[] GetAvgAndVariance(string provider,string connString) {
             using (var db = new DBContext(provider, connString))
             {
+                float[] result = new float[2];
+
                 int totale = 0;
                 foreach (Ordine order in db.Ordini)
                 {
@@ -30,7 +34,7 @@ namespace WebApiCoreCode
                 }
                 float media = totale / (float)db.Ordini.Count();
                 //float media = (float)db.Ordini.Average(o => o.codice);
-                Flush(this, "Media: " + media);
+                result[0] = media;
 
                 totale = 0;
                 foreach (Ordine order in db.Ordini)
@@ -39,18 +43,36 @@ namespace WebApiCoreCode
                 }
                 float varianza = totale / (float)db.Ordini.Count();
                 //float varianza = (float)db.Ordini.Average(o => Math.Pow(o.codice - media, 2));
-                Flush(this, "Varianza: " + varianza);
+                result[1] = varianza;
+                return result;
             }
         }
 
-        public override void GetSeries(string provider,string connString) {
+        public override IEnumerable<string> GetSeries(string provider,string connString) {
+            List<string> result = new List<string>();
             using (var db = new DBContext(provider, connString))
             {
                 foreach (SerieRecord s in db.Serie)
                 {
-                    Flush(this, s.esempio + "\t" + s.esempio2 + "\t" + s.Passengers + "\t" + s.jewelry);
+                    result.Add(s.jewelry.ToString());
                 }
             }
+            return result;
+        }
+
+        public override bool addCustomer(string connString, string provider,Cliente value)
+        {
+            return true;
+        }
+
+        public override bool updateCustomer(string connString, string provider,int id, Cliente value)
+        {
+            return true;
+        }
+
+        public override bool deleteCustomer(string connString, string provider,int id)
+        {
+            return true;
         }
     }
 }
