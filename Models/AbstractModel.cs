@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using static WebApiCoreCode.DBContext;
 
 public abstract class AbstractModel
 {
@@ -20,7 +21,7 @@ public abstract class AbstractModel
         this.FlushText(o, s);
     }
 
-    public abstract bool addCustomer(Customer value);
-    public abstract bool updateCustomer(int id, Customer value);
-    public abstract bool deleteCustomer(int id);
+    public abstract bool addCustomer(string connString, string provider,Cliente value);
+    public abstract bool updateCustomer(string connString, string provider,int id, Cliente value);
+    public abstract bool deleteCustomer(string connString, string provider,int id);
 }

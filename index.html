@@ -9,8 +9,8 @@
     <div>
         <button onclick="find(3);">Get</button>
         <button onclick="post();">Post</button>
-        <button onclick="put(3);">Put</button>
-        <button onclick="del(3);">Delete</button>
+        <button onclick="put(6);">Update</button>
+        <button onclick="del(7);">Delete</button>
     </div>
     <script>
 
@@ -28,14 +28,13 @@
                 }
             });
         }
-
         function post(){
             $.ajax({
                 url: "https://localhost:5001/api/customers",
                 type: "POST",
                 data: JSON.stringify({
-                    id: 6,
-                    Name: "Foo"
+                    id: 8,
+                    Name: "JO"
                 }),
                 dataType: "json",
                 contentType: "application/json",

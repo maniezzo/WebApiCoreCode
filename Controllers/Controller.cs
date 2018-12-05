@@ -4,6 +4,7 @@ using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data.Common;
+using static WebApiCoreCode.DBContext;
 
 namespace WebApiCoreCode
 {
@@ -58,17 +59,17 @@ namespace WebApiCoreCode
             DbProviderFactories.RegisterFactory(provider, factory);
         }
 
-        public bool addCustomer(Customer value)
+        public bool addCustomer(Cliente value)
         {
-            return model.addCustomer(value);
+            return model.addCustomer(connString, provider,value);
         }
-        public bool updateCustomer(int id, Customer value)
+        public bool updateCustomer(int id, Cliente value)
         {
-            return model.updateCustomer(id, value);
+            return model.updateCustomer(connString, provider,id, value);
         }
         internal bool deleteCustomer(int id)
         {
-            return model.deleteCustomer(id);
+            return model.deleteCustomer(connString, provider,id);
         }
 
         public IEnumerable<string> GetSeries()

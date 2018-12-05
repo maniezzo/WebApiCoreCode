@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using static WebApiCoreCode.DBContext;
 
 namespace WebAPI.Controllers
 {
@@ -21,7 +22,7 @@ namespace WebAPI.Controllers
 
         // POST api/customers
         [HttpPost]
-        public ActionResult<string> Post([FromBody] Customer value)
+        public ActionResult<string> Post([FromBody] Cliente value)
         {
             if (controller.addCustomer(value))
                 return JsonConvert.SerializeObject("Customer created");
@@ -31,7 +32,7 @@ namespace WebAPI.Controllers
 
         // PUT api/customers/5
         [HttpPut("{id}")]
-        public ActionResult<string> Put(int id, [FromBody] Customer value)
+        public ActionResult<string> Put(int id, [FromBody] Cliente value)
         {
             if (controller.updateCustomer(id, value))
                 return JsonConvert.SerializeObject("Customer updated");

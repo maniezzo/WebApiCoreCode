@@ -73,19 +73,74 @@ namespace WebApiCoreCode
             throw new NotImplementedException();
         }
 
-        public override bool addCustomer(Customer value)
+        public override bool addCustomer(string connString, string provider,Cliente value)
         {
-            return true;
+            DbProviderFactory dbFactory = DbProviderFactories.GetFactory(provider);
+
+            using (DbConnection conn = dbFactory.CreateConnection()) 
+            {
+                conn.ConnectionString = connString;
+                conn.Open();
+                IDbCommand com = conn.CreateCommand();
+                com.CommandText = "insert into clienti values (@id,@name);";
+                IDbDataParameter param1 = com.CreateParameter();
+                param1.DbType = DbType.Int32;
+                param1.ParameterName = "@id";
+                param1.Value = value.id;
+                com.Parameters.Add(param1);
+                IDbDataParameter param2 = com.CreateParameter();
+                param2.DbType = DbType.String;
+                param2.ParameterName = "@name";
+                param2.Value = value.nome;
+                com.Parameters.Add(param2);
+                if (com.ExecuteNonQuery()>0) return true;
+            }
+            return false;
         }
 
-        public override bool updateCustomer(int id, Customer value)
+        public override bool updateCustomer(string connString, string provider,int id, Cliente value)
         {
-            return true;
+            DbProviderFactory dbFactory = DbProviderFactories.GetFactory(provider);
+
+            using (DbConnection conn = dbFactory.CreateConnection()) 
+            {
+                conn.ConnectionString = connString;
+                conn.Open();
+                IDbCommand com = conn.CreateCommand();
+                com.CommandText = "update clienti set nome=@name where id=@id;";
+                IDbDataParameter param1 = com.CreateParameter();
+                param1.DbType = DbType.Int32;
+                param1.ParameterName = "@id";
+                param1.Value = id;
+                com.Parameters.Add(param1);
+                IDbDataParameter param2 = com.CreateParameter();
+                param2.DbType = DbType.String;
+                param2.ParameterName = "@name";
+                param2.Value = value.nome;
+                com.Parameters.Add(param2);
+                if (com.ExecuteNonQuery()>0) return true;
+            }
+            return false;
         }
 
-        public override bool deleteCustomer(int id)
+        public override bool deleteCustomer(string connString, string provider,int id)
         {
-            return true;
+            DbProviderFactory dbFactory = DbProviderFactories.GetFactory(provider);
+
+            using (DbConnection conn = dbFactory.CreateConnection()) 
+            {
+                conn.ConnectionString = connString;
+                conn.Open();
+                IDbCommand com = conn.CreateCommand();
+                com.CommandText = "delete from clienti where id=@id;";
+                IDbDataParameter param1 = com.CreateParameter();
+                param1.DbType = DbType.Int32;
+                param1.ParameterName = "@id";
+                param1.Value = id;
+                com.Parameters.Add(param1);
+                if (com.ExecuteNonQuery()>0) return true;
+            }
+            return false;
         }
     }
 }
