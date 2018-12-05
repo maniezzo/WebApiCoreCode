@@ -60,19 +60,61 @@ namespace WebApiCoreCode
             return result;
         }
 
-        public override bool addCustomer(string connString, string provider,Cliente value)
+        public override bool addCustomer(string connString, string provider, Cliente value)
         {
-            return true;
+            var db = new DBContext(provider, connString);
+            try
+            {
+                db.Clienti.Add(value);
+                db.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+            finally 
+            {
+                db.Dispose();
+            }
         }
 
         public override bool updateCustomer(string connString, string provider,int id, Cliente value)
         {
-            return true;
+            var db = new DBContext(provider, connString);
+            try
+            {
+                db.Clienti.Find(id).nome = value.nome;
+                db.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+            finally 
+            {
+                db.Dispose();
+            }
         }
 
         public override bool deleteCustomer(string connString, string provider,int id)
         {
-            return true;
+            var db = new DBContext(provider, connString);
+            try
+            {
+                db.Clienti.Remove(db.Clienti.Find(id));
+                db.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+            finally 
+            {
+                db.Dispose();
+            }
         }
     }
 }
