@@ -52,9 +52,9 @@ namespace WebApiCoreCode
             List<string> result = new List<string>();
             using (var db = new DBContext(provider, connString))
             {
-                foreach (SerieRecord s in db.Serie)
+                foreach (SerieRecord s in db.Serie.Take(144))
                 {
-                    result.Add(s.jewelry.ToString());
+                    result.Add(s.Passengers.ToString());
                 }
             }
             return result;

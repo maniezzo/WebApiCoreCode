@@ -10,7 +10,7 @@ using LinqStatistics;
 
 namespace WebApiCoreCode 
 {
-    public static class myLeastSquares 
+    public static class StatisticsModel 
     {
         public static LeastSquares LeastSquares(this IEnumerable<Tuple<double, double>> source)
         {
@@ -36,6 +36,11 @@ namespace WebApiCoreCode
             double m = (-sumX * sumY + numPoints * sumXY) / (numPoints * sumXX - sumX * sumX);
 
             return new LeastSquares(m, b);
+        }
+
+        public static double Pearson(this IEnumerable<double> source, IEnumerable<double> other)
+        {
+            return source.Covariance(other) / (source.StandardDeviationP() * other.StandardDeviationP());
         }
     }
 }

@@ -60,7 +60,7 @@ namespace WebApiCoreCode
             }
             
             DbProviderFactories.RegisterFactory(provider, factory);
-            this.forecastingModel = new ForecastingModel(model.GetSeries(provider, connString).Select(x => int.Parse(x)).ToList());
+            this.forecastingModel = new ForecastingModel(model.GetSeries(provider, connString).Select(x => double.Parse(x)).ToList());
         }
 
         public bool addCustomer(Cliente value)
@@ -83,8 +83,8 @@ namespace WebApiCoreCode
 
         public IEnumerable<String> doForecasting() 
         {
-            this.forecastingModel.applyMA(12).calculateSeasonality().deleteNoise().seasonAdjustement().calculateTrend();
-            return this.forecastingModel.Trend.Select(x => x.ToString());
+            this.forecastingModel.findSeasonality().applyMA().calculateSeasonality().deleteNoise().seasonAdjustement().calculateTrend().forecast();
+            return this.forecastingModel.ForecastedData.Select(x => x.ToString());
         }
 
         public float[] GetAvgAndVariance()

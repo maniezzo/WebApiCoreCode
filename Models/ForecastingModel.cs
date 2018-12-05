@@ -8,26 +8,49 @@ namespace WebApiCoreCode
 {
     public class ForecastingModel
     {
-        private List<int> Serie {get; set;}
+        private int seasonalityRate;
+        private List<double> Serie {get; set;}
         public List<double> Baseline {get; set;}
         public List<double> Seasonality {get; set;}
-
         private List<double> Seasons = new List<double>();
         public List<double> SeasonalityWithoutNoise = new List<double>();
         public List<double> SeasonallyAdjustedData {get; set;}
         public LeastSquares LeastSquaresParameters;
-
         public List<double> Trend;
-        private int seasonalityRate;
+        public List<double> ForecastedData;
 
-        public ForecastingModel(List<int> serie) 
+        public ForecastingModel(List<double> serie) 
         {
             this.Serie = serie;
         }
-        
-        public ForecastingModel applyMA(int seasonalityRate) 
+
+        public ForecastingModel findSeasonality() 
         {
-            this.seasonalityRate = seasonalityRate;
+            double[] arrSource = this.Serie.ToArray();
+            double pearson;  
+            double max = -1; 
+
+            
+            for(int shifts = 1; shifts <= 20; shifts++) {
+                double[] arr = this.Serie.ToArray();
+                Array.Copy(arr, 0, arr, shifts, arr.Length - shifts);
+                Array.Clear(arr, 0, shifts);
+                
+                pearson = StatisticsModel.Pearson(arrSource.Select(x => Convert.ToDouble(x)).ToList(), arr.Select(x => Convert.ToDouble(x)).ToList());
+                if (pearson > max) 
+                {
+                    seasonalityRate = shifts;
+                    max = pearson;
+                }
+            }
+
+            Console.WriteLine("pearson: " + max + " seasonalityRate: " + seasonalityRate);
+
+            return this;
+        }
+        
+        public ForecastingModel applyMA() 
+        {
             int startIndex = 0;
             int currentIndex = seasonalityRate / 2;
             List<double> ma = new List<double>();
@@ -124,9 +147,18 @@ namespace WebApiCoreCode
                 LeastSquaresSerie.Add(new Tuple<double, double>(i, this.Serie.ElementAt(i)));
             }
             //y = mx + b
-            LeastSquaresParameters = myLeastSquares.LeastSquares(LeastSquaresSerie);
+            LeastSquaresParameters = StatisticsModel.LeastSquares(LeastSquaresSerie);
             for (int i = 0; i < this.Serie.Count; i++) {
                 this.Trend.Add((i + 1) * LeastSquaresParameters.M + LeastSquaresParameters.B);
+            }
+            return this;
+        }
+
+        public ForecastingModel forecast()
+        {
+            this.ForecastedData = new List<double>();
+            for (int i = 0; i < Serie.Count; i++) {
+                this.ForecastedData.Add(this.Trend.ElementAt(i) * this.Seasons.ElementAt(i));
             }
             return this;
         }
