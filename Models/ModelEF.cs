@@ -54,7 +54,7 @@ namespace WebApiCoreCode
             {
                 foreach (SerieRecord s in db.Serie)
                 {
-                    result.Add(s.esempio + "\t" + s.esempio2 + "\t" + s.Passengers + "\t" + s.jewelry);
+                    result.Add(s.jewelry.ToString());
                 }
             }
             return result;

@@ -4,6 +4,7 @@ using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data.Common;
+using System.Linq;
 using static WebApiCoreCode.DBContext;
 
 namespace WebApiCoreCode
@@ -12,6 +13,8 @@ namespace WebApiCoreCode
     {
         AbstractModel model;
         OptimizationModel optimizationModel;
+        ForecastingModel forecastingModel;
+
         public delegate void viewEventHandler(object sender, string textToWrite); 
         public event viewEventHandler FlushText;
         string connString;
@@ -57,6 +60,7 @@ namespace WebApiCoreCode
             }
             
             DbProviderFactories.RegisterFactory(provider, factory);
+            this.forecastingModel = new ForecastingModel(model.GetSeries(provider, connString).Select(x => int.Parse(x)).ToList());
         }
 
         public bool addCustomer(Cliente value)
@@ -75,6 +79,12 @@ namespace WebApiCoreCode
         public IEnumerable<string> GetSeries()
         {
             return model.GetSeries(provider, connString);
+        }
+
+        public IEnumerable<String> GetMA() 
+        {
+            this.forecastingModel.applyMA(12);
+            return this.forecastingModel.Baseline.Select(x => x.ToString());
         }
 
         public float[] GetAvgAndVariance()
