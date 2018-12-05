@@ -81,10 +81,10 @@ namespace WebApiCoreCode
             return model.GetSeries(provider, connString);
         }
 
-        public IEnumerable<String> GetMA() 
+        public IEnumerable<String> doForecasting() 
         {
-            this.forecastingModel.applyMA(12);
-            return this.forecastingModel.Baseline.Select(x => x.ToString());
+            this.forecastingModel.applyMA(12).calculateSeasonality().deleteNoise().seasonAdjustement().calculateTrend();
+            return this.forecastingModel.Trend.Select(x => x.ToString());
         }
 
         public float[] GetAvgAndVariance()

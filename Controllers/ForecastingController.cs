@@ -17,7 +17,7 @@ namespace WebAPI.Controllers
         [HttpGet]
         public ActionResult<string> Get()
         {
-            return JsonConvert.SerializeObject(controller.GetMA().ToArray());
+            return JsonConvert.SerializeObject(controller.doForecasting().ToArray());
         }
     }
 }
