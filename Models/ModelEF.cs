@@ -48,16 +48,17 @@ namespace WebApiCoreCode
             }
         }
 
-        public override IEnumerable<string> GetSeries(string provider,string connString) {
-            List<string> result = new List<string>();
+        public override IEnumerable<double> GetSeries(string provider,string connString) {
+            //List<string> result = new List<string>();
             using (var db = new DBContext(provider, connString))
             {
-                foreach (SerieRecord s in db.Serie)
+                foreach (SerieRecord s in db.Serie.Take(144))
                 {
-                    result.Add(s.jewelry.ToString());
+                    //result.Add(s.Passengers.ToString());
+                    yield return s.Passengers.GetValueOrDefault();
                 }
             }
-            return result;
+            //return result;
         }
 
         public override bool addCustomer(string connString, string provider, Cliente value)
