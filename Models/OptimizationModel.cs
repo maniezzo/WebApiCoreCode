@@ -107,30 +107,46 @@ namespace WebApiCoreCode
         }
         public int[] SimulatedAnnealing(int[] sol, double T,int step=0)
         {
-            if(step%100==0) T *=0.9;
-            if(step==10000)
-                return sol;
-            int randS = new Random().Next(problem.numserv);
-            int randC = new Random().Next(problem.numcli);
+            Random r = new Random();
             
-            int[] tmpsol = (int[])sol.Clone(); 
-            tmpsol[randC]= randS;
+            while(step < 310000)//70000 miglior risultato 11332
+            {
+                int[] tmpsol = (int[])sol.Clone();
+                tmpsol[r.Next(problem.numcli)] = r.Next(problem.numserv);
+                try
+                {
+                    int cost = checkSol(tmpsol);
+                    int oldcost = checkSol(sol);
+                    double p = Math.Exp(-(cost-oldcost)/(double)T);
+                    if(cost<oldcost || r.Next()/(float)Int32.MaxValue<p){
+                        sol = tmpsol;
+                    }
+                }
+                catch
+                {
+                    step--;
+                }
+                step++;
+                if(step % 100 == 0) T *=0.99;
+            }
+            return sol;
+
+            /*int[] tmpsol = (int[])sol.Clone(); 
+            tmpsol[r.Next(problem.numcli)] = r.Next(problem.numserv);
             try
             {
                 int cost = checkSol(tmpsol);
                 int oldcost = checkSol(sol);
-                if(cost<oldcost){
+                double p = Math.Exp(-(cost-oldcost)/(double)T);
+                if(cost<oldcost || r.Next()/(float)Int32.MaxValue<p){
                     return SimulatedAnnealing(tmpsol,T,step+1);
                 }
-                double p = Math.Exp(-(cost-oldcost)/(double)T);
-                if(new Random().Next()<p)
-                    return SimulatedAnnealing(tmpsol,T,step+1); 
             }
             catch
             {
                 return SimulatedAnnealing(sol,T,step);
             }
-             return SimulatedAnnealing(sol,T,step+1);
+             return SimulatedAnnealing(sol,T,step+1);*/
         }
     }
 }

@@ -122,7 +122,7 @@ namespace WebApiCoreCode
                 string s = optimizationModel.writeSol(sol);
                 int[] sol2 = optimizationModel.Gap10(sol);
                 s += '\n' + optimizationModel.writeSol(sol2);
-                int[] sol3 = optimizationModel.SimulatedAnnealing(sol,100);
+                int[] sol3 = optimizationModel.SimulatedAnnealing(sol,80000);
                 s += '\n' + optimizationModel.writeSol(sol3);
                 return s;
 
