@@ -20,7 +20,7 @@
         }
     ],
     "settings": { 
-        "dbServer":"RemoteSqlServConn",
+        "dbServer":"SQLiteConn",
         "strategy":"ORM" //"Factory", "ORM"
     }
 }

@@ -60,7 +60,6 @@ namespace WebApiCoreCode
             }
             
             DbProviderFactories.RegisterFactory(provider, factory);
-            this.forecastingModel = new ForecastingModel(model.GetSeries(provider, connString).Select(x => int.Parse(x)).ToList());
         }
 
         public bool addCustomer(Cliente value)
@@ -78,11 +77,15 @@ namespace WebApiCoreCode
 
         public IEnumerable<string> GetSeries()
         {
-            return model.GetSeries(provider, connString);
+            var series = model.GetSeries(provider, connString);
+            this.forecastingModel = new ForecastingModel(series.Select(x => int.Parse(x)).ToList());
+            return series;
         }
 
         public IEnumerable<String> GetMA() 
         {
+            if(this.forecastingModel==null)
+                this.GetSeries();
             this.forecastingModel.applyMA(12);
             return this.forecastingModel.Baseline.Select(x => x.ToString());
         }
@@ -115,7 +118,14 @@ namespace WebApiCoreCode
 
             try 
             {
-                return optimizationModel.checkSol(sol).ToString();
+                optimizationModel.checkSol(sol);
+                string s = optimizationModel.writeSol(sol);
+                int[] sol2 = optimizationModel.Gap10(sol);
+                s += '\n' + optimizationModel.writeSol(sol2);
+                int[] sol3 = optimizationModel.SimulatedAnnealing(sol,100);
+                s += '\n' + optimizationModel.writeSol(sol3);
+                return s;
+
             } 
             catch (Exception e)
             {

@@ -15,6 +15,10 @@ namespace WebApiCoreCode
             return problem;
         }
 
+        public string writeSol(int[] sol) {
+            return String.Join(',', sol)+ " cost: " + this.checkSol(sol);
+        }
+
         public int checkSol(int[] sol)
         {  
             int z = 0, j;
@@ -58,7 +62,7 @@ namespace WebApiCoreCode
 
                 for(int i=0;i<problem.numserv;i++)
                 {  
-                    keys[i] = problem.cost[i,j] / problem.req[i,j];
+                    keys[i] = problem.req[i,j];//problem.cost[i,j]; // problem.req[i,j];
                     ind[i] = i;
                 }
                 Array.Sort(keys, ind);   
@@ -75,6 +79,58 @@ namespace WebApiCoreCode
                 
             }
             return sol;
+        }
+        public int[] Gap10(int[] sol)
+        {
+
+             for(int j=0;j<problem.numcli;j++)
+            {   
+                for(int i = 0;i<problem.numserv;i++)
+                {  
+                    if(sol[j]==i) continue;
+                    int[] tmpsol = (int[])sol.Clone(); 
+                    tmpsol[j]= i;
+                    try
+                    {
+                        int cost = checkSol(tmpsol);
+                        int oldcost = checkSol(sol);
+                        if(cost<oldcost){
+                            return Gap10(tmpsol);
+                        }
+                    }
+                    catch
+                    {  
+                    }
+                }
+            }           
+            return sol;
+        }
+        public int[] SimulatedAnnealing(int[] sol, double T,int step=0)
+        {
+            if(step%100==0) T *=0.9;
+            if(step==10000)
+                return sol;
+            int randS = new Random().Next(problem.numserv);
+            int randC = new Random().Next(problem.numcli);
+            
+            int[] tmpsol = (int[])sol.Clone(); 
+            tmpsol[randC]= randS;
+            try
+            {
+                int cost = checkSol(tmpsol);
+                int oldcost = checkSol(sol);
+                if(cost<oldcost){
+                    return SimulatedAnnealing(tmpsol,T,step+1);
+                }
+                double p = Math.Exp(-(cost-oldcost)/(double)T);
+                if(new Random().Next()<p)
+                    return SimulatedAnnealing(tmpsol,T,step+1); 
+            }
+            catch
+            {
+                return SimulatedAnnealing(sol,T,step);
+            }
+             return SimulatedAnnealing(sol,T,step+1);
         }
     }
 }
