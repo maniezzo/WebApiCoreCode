@@ -43,7 +43,6 @@ namespace WebApiCoreCode
                     max = pearson;
                 }
             }
-
             Console.WriteLine("pearson: " + max + " seasonalityRate: " + seasonalityRate);
 
             return this;
@@ -93,6 +92,10 @@ namespace WebApiCoreCode
             for (int i = 0; i < seasonalityRate / 2 * 3; i++) {
                 this.Seasonality.Add(1);
             }
+            if ((seasonalityRate % 2) == 1)
+            {
+                this.Seasonality.Add(1);
+            } 
             return this;
         }
 
@@ -157,6 +160,7 @@ namespace WebApiCoreCode
         public ForecastingModel forecast()
         {
             this.ForecastedData = new List<double>();
+            Console.WriteLine("Trend: " + this.Trend.Count + " Seasons: " + this.Seasons.Count);
             for (int i = 0; i < Serie.Count; i++) {
                 this.ForecastedData.Add(this.Trend.ElementAt(i) * this.Seasons.ElementAt(i));
             }

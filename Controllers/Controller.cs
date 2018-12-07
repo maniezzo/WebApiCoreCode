@@ -75,17 +75,17 @@ namespace WebApiCoreCode
             return model.deleteCustomer(connString, provider,id);
         }
 
-        public IEnumerable<double> GetSeries()
+        public IEnumerable<double> GetSeries(string name)
         {
-            var series = model.GetSeries(provider, connString);
+            var series = model.GetSeries(name, provider, connString);
             this.forecastingModel = new ForecastingModel(series);
             return series;
         }
 
-        public IEnumerable<double> doForecasting() 
+        public IEnumerable<double> doForecasting(string name) 
         {
-            if(this.forecastingModel==null)
-                this.GetSeries();
+            
+            this.GetSeries(name);
 
             this.forecastingModel
                 .findSeasonality()

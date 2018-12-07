@@ -68,7 +68,7 @@ namespace WebApiCoreCode
             }
         }
 
-        public override IEnumerable<double> GetSeries(string provider, string connString)
+        public override IEnumerable<double> GetSeries(string name, string provider, string connString)
         {
             throw new NotImplementedException();
         }

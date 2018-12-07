@@ -48,15 +48,38 @@ namespace WebApiCoreCode
             }
         }
 
-        public override IEnumerable<double> GetSeries(string provider,string connString) {
+        public override IEnumerable<double> GetSeries(string name, string provider,string connString) {
             //List<string> result = new List<string>();
             using (var db = new DBContext(provider, connString))
             {
-                foreach (SerieRecord s in db.Serie.Take(144))
-                {
-                    //result.Add(s.Passengers.ToString());
-                    yield return s.Passengers.GetValueOrDefault();
-                }
+
+                switch (name) {
+                        case "esempio": 
+                            foreach (SerieRecord s in db.Serie.Take(20))
+                            {
+                                yield return s.esempio.GetValueOrDefault();
+                            }
+                            break;
+                        case "esempio2": 
+                            foreach (SerieRecord s in db.Serie.Take(200))
+                            {
+                                yield return s.esempio2.GetValueOrDefault();
+                            }
+                            break;
+                        case "Passengers": 
+                            foreach (SerieRecord s in db.Serie.Take(144))
+                            {
+                                yield return s.Passengers.GetValueOrDefault();
+                            }
+                            break;
+                        case "jewelry": 
+                            foreach (SerieRecord s in db.Serie)
+                            {
+                                yield return s.jewelry.GetValueOrDefault();
+                            }
+                            break;
+                    }
+                
             }
             //return result;
         }

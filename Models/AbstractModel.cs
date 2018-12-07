@@ -14,7 +14,7 @@ public abstract class AbstractModel
     }
     public abstract string GetCustomerName(string connString, string provider, int id);
     public abstract float[] GetAvgAndVariance(string provider,string connString);
-    public abstract IEnumerable<double> GetSeries(string provider,string connString);
+    public abstract IEnumerable<double> GetSeries(string name, string provider,string connString);
     
     public void Flush(object o, string s)
     {
