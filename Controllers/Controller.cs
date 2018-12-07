@@ -75,19 +75,27 @@ namespace WebApiCoreCode
             return model.deleteCustomer(connString, provider,id);
         }
 
-        public IEnumerable<string> GetSeries()
+        public IEnumerable<double> GetSeries(string name)
         {
-            var series = model.GetSeries(provider, connString);
-            this.forecastingModel = new ForecastingModel(series.Select(x => int.Parse(x)).ToList());
+            var series = model.GetSeries(name, provider, connString);
+            this.forecastingModel = new ForecastingModel(series);
             return series;
         }
 
-        public IEnumerable<String> GetMA() 
+        public IEnumerable<double> doForecasting(string name) 
         {
-            if(this.forecastingModel==null)
-                this.GetSeries();
-            this.forecastingModel.applyMA(12);
-            return this.forecastingModel.Baseline.Select(x => x.ToString());
+            
+            this.GetSeries(name);
+
+            this.forecastingModel
+                .findSeasonality()
+                .applyMA()
+                .calculateSeasonality()
+                .deleteNoise()
+                .seasonAdjustement()
+                .calculateTrend()
+                .forecast();
+            return this.forecastingModel.ForecastedData;
         }
 
         public float[] GetAvgAndVariance()
@@ -122,7 +130,7 @@ namespace WebApiCoreCode
                 string s = optimizationModel.writeSol(sol);
                 int[] sol2 = optimizationModel.Gap10(sol);
                 s += '\n' + optimizationModel.writeSol(sol2);
-                int[] sol3 = optimizationModel.SimulatedAnnealing(sol,100);
+                int[] sol3 = optimizationModel.SimulatedAnnealing(sol,1000);
                 s += '\n' + optimizationModel.writeSol(sol3);
                 return s;
 

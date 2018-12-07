@@ -14,10 +14,10 @@ namespace WebAPI.Controllers
     {
         WebApiCoreCode.Controller controller = new WebApiCoreCode.Controller();
         // GET api/series
-        [HttpGet]
-        public ActionResult<string> Get()
+        [HttpGet("{name}")]
+        public ActionResult<string> Get(string name)
         {
-            return JsonConvert.SerializeObject(controller.GetSeries().ToArray());
+            return JsonConvert.SerializeObject(controller.GetSeries(name).ToArray());
         }
     }
 }
