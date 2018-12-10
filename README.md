@@ -39,6 +39,15 @@ In our case:
 
 In the Controller constructor we check the current field of settings and apply the chosen method.
 
+## SECOND STEP: Create a new project for WebAPI and merge with first project.
+After the creation and the editing of first project, we have worked with a second project for the realization of a solution Web API-based. 
+* In Visual Studio Core there isn't the possibility to create immediately a new project (c#/web/ASP.NET Web Application) like in Visual Studio.  
+* To create a new project in Visul Studio Code, open a terminal a digit:
+``` $ dotnet new webapi -o projectName
+    $ code -r projectName
+    ```
+
+
 
 ## Extras
 
