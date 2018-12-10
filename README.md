@@ -41,12 +41,12 @@ In the Controller constructor we check the current field of settings and apply t
 
 ## SECOND STEP - Create a new WebAPI project and merge it with first project
 After the creation and the editing of first project, we have worked with a second project for the realization of a Web API project. In Visual Studio Code there isn't the possibility to create immediately a new project (c#/web/ASP.NET Web Application) like in Visual Studio.  
-* To create a new project in Visul Studio Code, open a terminal a digit:
+* To create a new WebAPI project in Visul Studio Code, open a terminal and digits:
     ``` sh
     $ dotnet new webapi -o projectName
     $ code -r projectName
     ```
-
+After this, we have merge the first project into this WebAPI project and we have worked on this.
 
 
 ## Extras
