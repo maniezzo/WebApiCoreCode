@@ -18,7 +18,8 @@ namespace WebAPI.Controllers
         [HttpGet("{name}")]
         public ActionResult<string> Get(string name)
         {
-            return controller.solveGAP(name);
+
+            return JsonConvert.SerializeObject(controller.solveGAP(name).SelectMany(s => s.Split(' ')));
         }
     }
 }

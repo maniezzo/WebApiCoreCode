@@ -16,7 +16,7 @@ namespace WebApiCoreCode
         }
 
         public string writeSol(int[] sol) {
-            return String.Join(',', sol)+ " cost: " + this.checkSol(sol);
+            return String.Join(',', sol)+ " " + this.checkSol(sol);
         }
 
         public int checkSol(int[] sol)

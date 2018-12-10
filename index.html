@@ -99,14 +99,14 @@
                 type: "GET",
                 contentType: "application/json",
                 success: function (result) {
-                    var elem = JSON.parse(result)
-                    readResult(result);
+                    fillTable(JSON.parse(result),1);
                 },
                 error: function (err) {
                     alert(JSON.stringify(err));
                 }
             });
         }
+        
         function post(id, nome){
             $.ajax({
                 url: "https://localhost:5001/api/customers",
@@ -165,7 +165,7 @@
                 type: "GET",
                 contentType: "application/json",
                 success: function (result) {
-                    fillTable(JSON.parse(result))
+                    Plot(JSON.parse(result))
                 },
                 error: function (err) {
                     alert(JSON.stringify(err));
@@ -183,7 +183,7 @@
                 type: "GET",
                 contentType: "application/json",
                 success: function (result) {
-                    fillTable(JSON.parse(result))
+                    Plot(JSON.parse(result))
                 },
                 error: function (err) {
                     alert(JSON.stringify(err));
@@ -197,7 +197,7 @@
                 type: "GET",
                 contentType: "application/json",
                 success: function (result) {
-                    readResult(result);
+                    fillTable(JSON.parse(result),3);
                 },
                 error: function (err) {
                     alert(JSON.stringify(err));
@@ -208,20 +208,12 @@
         function readResult(elem) {
             alert(elem)
         }
-        function fillTable(values) {
-            /* var table = document.getElementById("table");
-            table.innerHTML = "";
-
-            var cellPerRow = 10;
-            var row;
-            for (let index = 0; index < values.length; index++) {
-                if(index%cellPerRow == 0) row = table.insertRow(-1);
-                var cell = row.insertCell(-1);
-                cell.innerHTML = values[index];
-            } */
-
+        var myChart;
+        function Plot(values) {
             var ctx = document.getElementById("myChart").getContext('2d');
-            var myChart = new Chart(ctx, {
+            if(myChart)
+                myChart.destroy();
+            myChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: getIndeces(values),
@@ -258,6 +250,18 @@
                 }
             });
             
+        }
+
+        function fillTable(values, cellPerRow = 10) {
+            var table = document.getElementById("table");
+            table.innerHTML = "";
+
+            var row;
+            for (let index = 0; index < values.length; index++) {
+                if(index%cellPerRow == 0) row = table.insertRow(-1);
+                var cell = row.insertCell(-1);
+                cell.innerHTML = values[index];
+            }
         }
 
         function getIndeces(list) {
