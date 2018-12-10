@@ -48,10 +48,22 @@ After the creation and the editing of first project, we have worked with a secon
     ```
 After this, we have merge the first project into this WebAPI project and we have worked on this.
 
-### CORS PROBLEMS
+### CORS problems
 We have created an index.html file but when we launched it in localhost, we have encountered some problems. The origin of this problem is CORS:
 * CORS definition: Cross-origin resource sharing (CORS) is a mechanism that allows restricted resources on a web page to be requested from another domain outside the domain from which the first resource was served. 
 A web page may freely embed cross-origin images, stylesheets, scripts, iframes, and videos. Certain "cross-domain" requests, notably Ajax requests, are forbidden by default by the same-origin security policy.
+
+In order to resolve this problem, we have added some lines of code in file Startup.cs. In particular:
+* At line 28:
+    ``` sh
+    services.AddCors(options => options.AddPolicy("AllowAll", builder => 
+                builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+    ```
+* At line 46:
+    ``` sh
+    app.UseCors("AllowAll");
+    ```
+
 
 ## Extras
 
