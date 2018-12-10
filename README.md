@@ -5,7 +5,7 @@ Classroom project for business analytics: visual studio code access to webapi ba
 * make sure you have installed [visual studio code](https://code.visualstudio.com/) (and [.NET Core SDK](https://www.microsoft.com/net/download))
 * add the [C# plugin](https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp)
 
-## Steps to create the project from scratch:
+## FIRST STEP: Create the project from scratch:
 * open a terminal:
     ```sh
     $ mkdir myproject
