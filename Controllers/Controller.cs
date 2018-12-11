@@ -118,27 +118,36 @@ namespace WebApiCoreCode
             return model.GetCustomerName(connString, provider, id);
         }
 
-        public string[] solveGAP(string name)
+        public string solveGAP(string name, string algoritm)
         {
             optimizationModel.readJson("problems/" + name);
             int[] sol = optimizationModel.findSol();
 
             if (optimizationModel.isSolValid(sol)) 
             {
-                int[] sol2 = optimizationModel.Gap10(sol);
-                int[] sol3 = optimizationModel.SimulatedAnnealing(sol);
-                int[] sol4 = optimizationModel.TabuSearch2(sol);
-                return new string[] {
-                    "Costruttiva " + optimizationModel.writeSol(sol), 
-                    "Gap10 " + optimizationModel.writeSol(sol2), 
-                    "Simulated-Annealing " + optimizationModel.writeSol(sol3),
-                    "Tabu-Search " + optimizationModel.writeSol(sol4)
-                };
-
+                switch (algoritm)
+                {
+                    case "gap10":
+                        return  algoritm + " " + optimizationModel.writeSol(optimizationModel.Gap10(sol));
+                    case "SimulatedAnnealing":
+                            int[] sol3 = null;
+                            for (int i = 0; i < 5; i++)
+                            {
+                                int[] sol3tmp = optimizationModel.SimulatedAnnealing(sol);
+                                if(i==0) sol3= sol3tmp;
+                                else{
+                                    sol3= optimizationModel.getCost(sol3)> optimizationModel.getCost(sol3tmp)?sol3tmp: sol3;
+                                }
+                            }
+                            return  algoritm + " " + optimizationModel.writeSol(sol3);
+                    case "TabuSearch":
+                        return  algoritm + " " + optimizationModel.writeSol(optimizationModel.TabuSearch2(sol));
+                    default: return "";
+                 }
             } 
             else
             {
-                return new string[] { "No intial solution found." };
+                return "No intial solution found." ;
             }
         }
     }

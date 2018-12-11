@@ -15,11 +15,11 @@ namespace WebAPI.Controllers
         WebApiCoreCode.Controller controller = new WebApiCoreCode.Controller();
 
         // GET api/optimization/trivial.json
-        [HttpGet("{name}")]
-        public ActionResult<string> Get(string name)
+        [HttpGet("{name}/{algorithm}")]
+        public ActionResult<string> Get(string name,string algorithm)
         {
             string fullname = name + (name.EndsWith(".json") ? "" : ".json");
-            return JsonConvert.SerializeObject(controller.solveGAP(fullname).SelectMany(s => s.Split(' ')));
+            return JsonConvert.SerializeObject(controller.solveGAP(fullname,algorithm).Split(' '));
         }
     }
 }

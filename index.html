@@ -192,8 +192,32 @@
         }
 
         function optimization(nome){
+            var table = document.getElementById("table");
+            table.innerHTML = "";
             $.ajax({
-                url: "https://localhost:5001/api/optimization/" + nome,
+                url: "https://localhost:5001/api/optimization/" + nome + "/gap10",
+                type: "GET",
+                contentType: "application/json",
+                success: function (result) {
+                    fillTable(JSON.parse(result),3);
+                },
+                error: function (err) {
+                    alert(JSON.stringify(err));
+                }
+            });
+            $.ajax({
+                url: "https://localhost:5001/api/optimization/" + nome + "/SimulatedAnnealing",
+                type: "GET",
+                contentType: "application/json",
+                success: function (result) {
+                    fillTable(JSON.parse(result),3);
+                },
+                error: function (err) {
+                    alert(JSON.stringify(err));
+                }
+            });
+            $.ajax({
+                url: "https://localhost:5001/api/optimization/" + nome + "/TabuSearch",
                 type: "GET",
                 contentType: "application/json",
                 success: function (result) {
@@ -251,11 +275,8 @@
             });
             
         }
-
         function fillTable(values, cellPerRow = 10) {
-            var table = document.getElementById("table");
-            table.innerHTML = "";
-
+        
             var row;
             for (let index = 0; index < values.length; index++) {
                 if(index%cellPerRow == 0) row = table.insertRow(-1);

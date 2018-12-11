@@ -138,7 +138,7 @@ namespace WebApiCoreCode
             
             int totalSteps = 0, step = 0;
 
-            while(step <= 5 || p > 0.0001)
+            while(step <= 50 || p > 0.0001)
             {
                 int[] newSol = (int[])currentSol.Clone();
                 int j = r.Next(problem.numcli);
@@ -178,7 +178,7 @@ namespace WebApiCoreCode
             
                 step++;
                 totalSteps++;
-                if(totalSteps % (problem.numcli*(problem.numcli-1)) == 0) T *=0.95;
+                if(totalSteps % (problem.numcli*(problem.numcli-1)) == 0) T *=0.98;
             }
             return optSol;
         }
@@ -257,7 +257,9 @@ namespace WebApiCoreCode
         {
             //bestSol = soluzione migliore nel vicinato
             //bestCurrentSolution = soluzione migliore in assoluto
-
+            int[] capLeft = getCapLeft(sol);
+            int currentCost = getCost(sol);
+            int bestCost;
             if (currentIteration == maxIteration)
                  return bestSolution;
 
@@ -267,8 +269,12 @@ namespace WebApiCoreCode
             int[] neighbourhoodBestSol = null;
             int neighbourhoodBestCost = Int32.MaxValue;
 
-            if (bestSolution == null) bestSolution = sol;
-            int bestCost = getCost(bestSolution);
+            if (bestSolution == null) 
+            { 
+                bestCost= currentCost;
+                bestSolution = sol;
+            }
+            else  bestCost = getCost(bestSolution);
 
             for(int j=0;j<problem.numcli;j++)
             {   
@@ -278,9 +284,9 @@ namespace WebApiCoreCode
 
                     int[] newSol = (int[])sol.Clone(); 
                     newSol[j]= i;
-                    if (isSolValid(newSol))
+                    if (capLeft[i]>= problem.req[i,j])
                     {
-                        int newCost = getCost(newSol);
+                        int newCost = currentCost - problem.cost[sol[j],j] + problem.cost[i,j];
                         
                         if (newCost < bestCost || (newCost < neighbourhoodBestCost && tabuList[i,j] <= currentIteration)) {
                             tabuList[i,j] = currentIteration + tabuTenure;
