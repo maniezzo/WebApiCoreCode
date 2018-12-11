@@ -120,28 +120,25 @@ namespace WebApiCoreCode
 
         public string[] solveGAP(string name)
         {
-            GeneralizedAssignmentProblem problem = optimizationModel.readJson("problems/"+name);
-
+            optimizationModel.readJson("problems/" + name);
             int[] sol = optimizationModel.findSol();
 
-            try 
+            if (optimizationModel.isSolValid(sol)) 
             {
-                optimizationModel.checkSol(sol);
-                //string s = optimizationModel.writeSol(sol);
                 int[] sol2 = optimizationModel.Gap10(sol);
-                //s += '\n' + optimizationModel.writeSol(sol2);
                 int[] sol3 = optimizationModel.SimulatedAnnealing(sol);
-                //s += '\n' + optimizationModel.writeSol(sol3);
+                int[] sol4 = optimizationModel.TabuSearch2(sol);
                 return new string[] {
                     "Costruttiva " + optimizationModel.writeSol(sol), 
                     "Gap10 " + optimizationModel.writeSol(sol2), 
-                    "Simulated-Annealing " + optimizationModel.writeSol(sol3)
+                    "Simulated-Annealing " + optimizationModel.writeSol(sol3),
+                    "Tabu-Search " + optimizationModel.writeSol(sol4)
                 };
 
             } 
-            catch (Exception e)
+            else
             {
-                return null;//e.Message +'\n' + String.Join(',', sol);
+                return new string[] { "No intial solution found." };
             }
         }
     }
