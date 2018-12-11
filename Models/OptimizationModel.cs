@@ -105,11 +105,19 @@ namespace WebApiCoreCode
             }           
             return sol;
         }
-        public int[] SimulatedAnnealing(int[] sol, double T,int step=0)
+        public int[] SimulatedAnnealing(int[] sol)
         {
+            int[] optsol = null;
+            int optcost = Int32.MaxValue;
+
             Random r = new Random();
+            bool firstStep = true;
+            double p = 0.6;
+            double T = 0;
             
-            while(step < 310000)//70000 miglior risultato 11332
+            int totalSteps = 0, step = 0;
+
+            while(step <= 5 || p > 0.0001)
             {
                 int[] tmpsol = (int[])sol.Clone();
                 tmpsol[r.Next(problem.numcli)] = r.Next(problem.numserv);
@@ -117,36 +125,34 @@ namespace WebApiCoreCode
                 {
                     int cost = checkSol(tmpsol);
                     int oldcost = checkSol(sol);
-                    double p = Math.Exp(-(cost-oldcost)/(double)T);
-                    if(cost<oldcost || r.Next()/(float)Int32.MaxValue<p){
+
+                    if(cost<=oldcost){
                         sol = tmpsol;
+                        if (cost < optcost) {
+                            optsol = sol;
+                            optcost = cost;
+                            step = 0;
+                        }
+                    } else {
+                        if (firstStep) {
+                            T = -(cost-oldcost)/Math.Log(p);
+                            firstStep = false;
+                        } else
+                            p = Math.Exp(-(cost-oldcost)/(double)T);
+
+                        if(r.Next()/(float)Int32.MaxValue<p){
+                            sol = tmpsol;
+                        }
                     }
                 }
                 catch
                 {
-                    step--;
                 }
                 step++;
-                if(step % 100 == 0) T *=0.99;
+                totalSteps++;
+                if(totalSteps % (problem.numcli*(problem.numcli-1)) == 0) T *=0.95;
             }
-            return sol;
-
-            /*int[] tmpsol = (int[])sol.Clone(); 
-            tmpsol[r.Next(problem.numcli)] = r.Next(problem.numserv);
-            try
-            {
-                int cost = checkSol(tmpsol);
-                int oldcost = checkSol(sol);
-                double p = Math.Exp(-(cost-oldcost)/(double)T);
-                if(cost<oldcost || r.Next()/(float)Int32.MaxValue<p){
-                    return SimulatedAnnealing(tmpsol,T,step+1);
-                }
-            }
-            catch
-            {
-                return SimulatedAnnealing(sol,T,step);
-            }
-             return SimulatedAnnealing(sol,T,step+1);*/
+            return optsol;
         }
     }
 }
