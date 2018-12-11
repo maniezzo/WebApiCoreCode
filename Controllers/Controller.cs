@@ -118,7 +118,7 @@ namespace WebApiCoreCode
             return model.GetCustomerName(connString, provider, id);
         }
 
-        public string solveGAP(string name)
+        public string[] solveGAP(string name)
         {
             GeneralizedAssignmentProblem problem = optimizationModel.readJson("problems/"+name);
 
@@ -127,17 +127,21 @@ namespace WebApiCoreCode
             try 
             {
                 optimizationModel.checkSol(sol);
-                string s = optimizationModel.writeSol(sol);
+                //string s = optimizationModel.writeSol(sol);
                 int[] sol2 = optimizationModel.Gap10(sol);
-                s += '\n' + optimizationModel.writeSol(sol2);
+                //s += '\n' + optimizationModel.writeSol(sol2);
                 int[] sol3 = optimizationModel.SimulatedAnnealing(sol,1000);
-                s += '\n' + optimizationModel.writeSol(sol3);
-                return s;
+                //s += '\n' + optimizationModel.writeSol(sol3);
+                return new string[] {
+                    "Costruttiva " + optimizationModel.writeSol(sol), 
+                    "Gap10 " + optimizationModel.writeSol(sol2), 
+                    "Simulated-Annealing " + optimizationModel.writeSol(sol3)
+                };
 
             } 
             catch (Exception e)
             {
-                return e.Message +'\n' + String.Join(',', sol);
+                return null;//e.Message +'\n' + String.Join(',', sol);
             }
         }
     }
