@@ -105,11 +105,19 @@ namespace WebApiCoreCode
             }           
             return sol;
         }
-        public int[] SimulatedAnnealing(int[] sol, double T,int step=0)
+        public int[] SimulatedAnnealing(int[] sol)
         {
+            int[] optsol = null;
+            int optcost = Int32.MaxValue;
+
             Random r = new Random();
+            bool firstStep = true;
+            double p = 0.6;
+            double T = 0;
             
-            while(step < 310000)//70000 miglior risultato 11332
+            int totalSteps = 0, step = 0;
+
+            while(step <= 5 || p > 0.0001)
             {
                 int[] tmpsol = (int[])sol.Clone();
                 tmpsol[r.Next(problem.numcli)] = r.Next(problem.numserv);
@@ -117,36 +125,171 @@ namespace WebApiCoreCode
                 {
                     int cost = checkSol(tmpsol);
                     int oldcost = checkSol(sol);
-                    double p = Math.Exp(-(cost-oldcost)/(double)T);
-                    if(cost<oldcost || r.Next()/(float)Int32.MaxValue<p){
+
+                    if(cost<=oldcost){
                         sol = tmpsol;
+                        if (cost < optcost) {
+                            optsol = sol;
+                            optcost = cost;
+                            step = 0;
+                        }
+                    } else {
+                        if (firstStep) {
+                            T = -(cost-oldcost)/Math.Log(p);
+                            firstStep = false;
+                        } else
+                            p = Math.Exp(-(cost-oldcost)/(double)T);
+
+                        if(r.Next()/(float)Int32.MaxValue<p){
+                            sol = tmpsol;
+                        }
                     }
                 }
                 catch
                 {
-                    step--;
                 }
                 step++;
-                if(step % 100 == 0) T *=0.99;
+                totalSteps++;
+                if(totalSteps % (problem.numcli*(problem.numcli-1)) == 0) T *=0.95;
             }
-            return sol;
+            return optsol;
+        }
 
-            /*int[] tmpsol = (int[])sol.Clone(); 
-            tmpsol[r.Next(problem.numcli)] = r.Next(problem.numserv);
-            try
+/* 
+        public int[] TabuSearch(int[] sol, int tabuTenure, int maxIteration, int[,] tabuList = null, int actualIteration = 0)
+        {
+
+            if (tabuList == null) 
             {
-                int cost = checkSol(tmpsol);
-                int oldcost = checkSol(sol);
-                double p = Math.Exp(-(cost-oldcost)/(double)T);
-                if(cost<oldcost || r.Next()/(float)Int32.MaxValue<p){
-                    return SimulatedAnnealing(tmpsol,T,step+1);
+                tabuList = initializeTabuList();
+            }
+
+                        
+            int[] lessWorseSol = null;
+            int lessWorseCost = Int32.MaxValue;
+
+             for(int j=0;j<problem.numcli;j++)
+            {   
+                for(int i = 0;i<problem.numserv;i++)
+                {  
+                    if(sol[j] == i) continue;
+
+                    int[] tmpsol = (int[])sol.Clone(); 
+                    tmpsol[j]= i;
+                    try
+                    {
+                        int cost = checkSol(tmpsol);
+                        int oldcost = checkSol(sol);
+                       
+
+                        if (cost < oldcost && tabuList[j,i] <= actualIteration){
+                            actualIteration++;
+                            if (actualIteration == maxIteration) {
+                                break;
+                            }
+                            tabuList[j,i] = actualIteration + tabuTenure;
+                            return TabuSearch(tmpsol, tabuTenure, maxIteration, tabuList, actualIteration);
+                        } else if (tabuList[j,i] <= actualIteration) {
+                            if (lessWorseSol == null || cost < lessWorseCost) {
+                                lessWorseSol = tmpsol;
+                            } 
+                        }
+                    }
+                    catch
+                    {}
+                }
+            }   
+
+            if (maxIteration == actualIteration) {
+                 return sol;
+            } else {
+                actualIteration++;
+                return TabuSearch(lessWorseSol, tabuTenure, maxIteration, tabuList, actualIteration);
+            }
+        } */
+
+         public int[,] initializeTabuList()
+         {
+             int[,] tabuList = new int[problem.numserv, problem.numcli];
+
+            /* riempire la tabuList di tutti 0 */
+            for(int j=0;j<problem.numcli;j++)
+            {   
+                for(int i = 0;i<problem.numserv;i++)
+                {
+                    tabuList[i,j] = 0;
                 }
             }
-            catch
+
+            return tabuList; 
+         }
+
+
+
+
+
+
+
+
+
+
+         public int[] TabuSearch2(int[] sol, int tabuTenure, int maxIteration, int[] bestCurrentSolution = null, int[,] tabuList = null, int currentIteration = 0)
+        {
+
+            if (tabuList == null) 
             {
-                return SimulatedAnnealing(sol,T,step);
+                tabuList = initializeTabuList();
             }
-             return SimulatedAnnealing(sol,T,step+1);*/
+
+                        
+            int[] bestSol = null;
+            int bestCost = Int32.MaxValue;
+
+            int bestCurrentCost = checkSol(bestCurrentSolution);
+
+             for(int j=0;j<problem.numcli;j++)
+            {   
+                for(int i = 0;i<problem.numserv;i++)
+                {  
+                    if(sol[j] == i) continue;
+
+                    int[] tmpsol = (int[])sol.Clone(); 
+                    tmpsol[j]= i;
+                    try
+                    {
+                        int cost = checkSol(tmpsol);
+                        
+                        if (cost < bestCurrentCost || (cost < bestCost && tabuList[j,i] <= currentIteration)) {
+                            tabuList[j,i] = currentIteration + tabuTenure;
+                            bestSol = tmpsol;    
+                            bestCost = cost; 
+                        }
+                    }
+                    catch
+                    {}
+                }
+            }
+
+            currentIteration++;
+            int[] tempSol = sol;
+            int tempCost = checkSol(sol);
+         
+            if (bestCost < tempCost) {
+                tempSol = bestSol;
+                tempCost = bestCost; 
+            }
+
+            if (bestCurrentSolution == null) {
+                bestCurrentSolution = tempSol;         
+            } else if (bestCurrentCost < tempCost) {
+                bestCurrentSolution = tempSol;
+            }
+
+            if (maxIteration == currentIteration) {
+                 return bestCurrentSolution;
+            } else {
+                return TabuSearch2(bestSol, tabuTenure, maxIteration, bestCurrentSolution, tabuList, currentIteration);
+            }
         }
     }
 }

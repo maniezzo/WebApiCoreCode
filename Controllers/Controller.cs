@@ -130,7 +130,7 @@ namespace WebApiCoreCode
                 //string s = optimizationModel.writeSol(sol);
                 int[] sol2 = optimizationModel.Gap10(sol);
                 //s += '\n' + optimizationModel.writeSol(sol2);
-                int[] sol3 = optimizationModel.SimulatedAnnealing(sol,1000);
+                int[] sol3 = optimizationModel.SimulatedAnnealing(sol);
                 //s += '\n' + optimizationModel.writeSol(sol3);
                 return new string[] {
                     "Costruttiva " + optimizationModel.writeSol(sol), 
@@ -139,7 +139,7 @@ namespace WebApiCoreCode
                 };
 
             } 
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;//e.Message +'\n' + String.Join(',', sol);
             }
