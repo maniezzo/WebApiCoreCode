@@ -11,7 +11,7 @@
     <script src="Chart.bundle.js"></script>
 
 </head>
-<body>
+<body onload="populateProblems()">
     <div class="container">
         <div class="row" style="margin:5px;">
             <div class="col-sm-8">
@@ -62,7 +62,12 @@
     
         <div class="row" style="margin:5px;">
             <div class="col-sm-8">
-                <input id="nomeSerie" class="form-control" type="text" placeholder="name of serie to load">
+                <select id="nomeSerie" class="form-control">
+                    <option>esempio</option>
+                    <option>esempio2</option>
+                    <option>jewelry</option>
+                    <option>Passengers</option>
+                </select>
             </div>
             <div class="col-sm-4">
                 <button class="btn btn-block btn-primary" onclick="loadSerie(document.getElementById('nomeSerie').value);">Get Serie</button>
@@ -70,7 +75,12 @@
         </div>
         <div class="row" style="margin:5px;">
             <div class="col-sm-8">
-                <input id="nomeFore" class="form-control" type="text" placeholder="name of serie to forecast">
+                <select id="nomeFore" class="form-control">
+                    <option>esempio</option>
+                    <option>esempio2</option>
+                    <option>jewelry</option>
+                    <option>Passengers</option>
+                </select>
             </div>
             <div class="col-sm-4">
                 <button class="btn btn-block btn-primary" onclick="forecast(document.getElementById('nomeFore').value);">Forecast</button>
@@ -79,7 +89,9 @@
         
         <div class="row" style="margin:5px;">
                 <div class="col-sm-8">
-                    <input id="nomeProblema" class="form-control" type="text" placeholder="name of problem to load">
+                    <select id="nomeProblema" class="form-control">
+                        <!--caricati al caricamento della pagina-->
+                    </select>
                 </div>
                 <div class="col-sm-4">
                     <button class="btn btn-block btn-primary" onclick="optimization(document.getElementById('nomeProblema').value);">Optimization</button>
@@ -93,6 +105,24 @@
     <canvas id="myChart" width="400" height="400"></canvas>
 
     <script>
+        function populateProblems() {
+            $.ajax({
+                url: "https://localhost:5001/api/optimization/problems",
+                type: "GET",
+                contentType: "application/json",
+                success: function (result) {
+                    JSON.parse(result).forEach(p => {
+                        var x = document.createElement("option");
+                        x.appendChild(document.createTextNode(p));
+                        document.getElementById("nomeProblema").appendChild(x);
+                    });
+                },
+                error: function (err) {
+                    alert(JSON.stringify(err));
+                }
+            });
+        }
+
         function find(id){
             $.ajax({
                 url: "https://localhost:5001/api/customers/" + id,
