@@ -14,12 +14,21 @@ namespace WebAPI.Controllers
     {
         WebApiCoreCode.Controller controller = new WebApiCoreCode.Controller();
 
-        // GET api/optimization/trivial.json
+        // GET api/optimization/trivial/gap10
         [HttpGet("{name}/{algorithm}")]
         public ActionResult<string> Get(string name,string algorithm)
         {
             string fullname = name + (name.EndsWith(".json") ? "" : ".json");
             return JsonConvert.SerializeObject(controller.solveGAP(fullname,algorithm).Split(' '));
+        }
+
+        // GET api/optimization/problems
+        [HttpGet("problems")]
+        public ActionResult<string> Get()
+        {
+            return JsonConvert.SerializeObject(
+                System.IO.Directory.GetFiles(@"problems\", "*.json").Select(n => n.Replace(@"problems\",""))
+            );
         }
     }
 }
