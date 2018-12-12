@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" /> 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Progetto SSD</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="Chart.bundle.js"></script>
+
+</head>
+<body onload="populateProblems()">
+    <div class="container">
+        <div class="row" style="margin:5px;">
+            <div class="col-sm-8">
+                <input id="idFind" class="form-control" type="number" placeholder="id">
+            </div>
+            <div class="col-sm-4">
+                <button class="btn btn-block btn-primary" onclick="find(document.getElementById('idFind').value);">Get customer name</button>
+            </div>
+        </div>
+        <div class="row" style="margin:5px;">
+            <div class="col-sm-4">
+                <input id="idInsert" class="form-control" type="number" placeholder="id">
+            </div>
+            <div class="col-sm-4">
+                <input id="nameInsert" class="form-control" type="text" placeholder="nome">
+            </div>
+            <div class="col-sm-4">
+                <button class="btn btn-block btn-primary" 
+                    onclick="post(
+                        document.getElementById('idInsert').value,
+                        document.getElementById('nameInsert').value);">Insert Customer</button>
+            </div>
+        </div>
+        
+        <div class="row" style="margin:5px;">
+            <div class="col-sm-4">
+                <input id="idUpdate" class="form-control" type="number" placeholder="id">
+            </div>
+            <div class="col-sm-4">
+                <input id="nomeUpdate" class="form-control" type="text" placeholder="nome">
+            </div>
+            <div class="col-sm-4">
+                    <button class="btn btn-block btn-primary" 
+                    onclick="put(
+                        document.getElementById('idUpdate').value,
+                        document.getElementById('nomeUpdate').value);">Update Customer</button>
+            </div>
+        </div>
+        
+        <div class="row" style="margin:5px;">
+            <div class="col-sm-8">
+                <input id="idDelete" class="form-control" type="number" placeholder="id">
+            </div>
+            <div class="col-sm-4">
+                <button class="btn btn-block btn-primary" onclick="del(document.getElementById('idDelete').value);">Delete customer</button>
+            </div>
+        </div>
+    
+        <div class="row" style="margin:5px;">
+            <div class="col-sm-8">
+                <select id="nomeSerie" class="form-control">
+                    <option>esempio</option>
+                    <option>esempio2</option>
+                    <option>jewelry</option>
+                    <option>Passengers</option>
+                </select>
+            </div>
+            <div class="col-sm-4">
+                <button class="btn btn-block btn-primary" onclick="loadSerie(document.getElementById('nomeSerie').value);">Get Serie</button>
+            </div>
+        </div>
+        <div class="row" style="margin:5px;">
+            <div class="col-sm-8">
+                <select id="nomeFore" class="form-control">
+                    <option>esempio</option>
+                    <option>esempio2</option>
+                    <option>jewelry</option>
+                    <option>Passengers</option>
+                </select>
+            </div>
+            <div class="col-sm-4">
+                <button class="btn btn-block btn-primary" onclick="forecast(document.getElementById('nomeFore').value);">Forecast</button>
+            </div>
+        </div>
+        
+        <div class="row" style="margin:5px;">
+                <div class="col-sm-8">
+                    <select id="nomeProblema" class="form-control">
+                        <!--caricati al caricamento della pagina
+                        -->
+                    </select>
+                </div>
+                <div class="col-sm-4">
+                    <button class="btn btn-block btn-primary" onclick="optimization(document.getElementById('nomeProblema').value);">Optimization</button>
+                </div>
+            </div>
+    </div>
+    <div class="container table-responsive" id="divTable">
+        <table id="table" class="table table-striped table-bordered">
+        </table>
+    </div>
+    <canvas id="myChart" width="400" height="400"></canvas>
+
+    <script>
+        function populateProblems() {
+            $.ajax({
+                url: "https://localhost:5001/api/optimization/problems",
+                type: "GET",
+                contentType: "application/json",
+                success: function (result) {
+                    JSON.parse(result).forEach(p => {
+                        var x = document.createElement("option");
+                        x.appendChild(document.createTextNode(p));
+                        document.getElementById("nomeProblema").appendChild(x);
+                    });
+                },
+                error: function (err) {
+                    alert(JSON.stringify(err));
+                }
+            });
+        }
+
+        function find(id){
+            $.ajax({
+                url: "https://localhost:5001/api/customers/" + id,
+                type: "GET",
+                contentType: "application/json",
+                success: function (result) {
+                    var elem = JSON.parse(result)
+                    readResult(result);
+                },
+                error: function (err) {
+                    alert(JSON.stringify(err));
+                }
+            });
+        }
+        function post(id, nome){
+            $.ajax({
+                url: "https://localhost:5001/api/customers",
+                type: "POST",
+                data: JSON.stringify({
+                    id: id,
+                    nome: nome
+                }),
+                dataType: "json",
+                contentType: "application/json",
+                success: function (result) {
+                    alert(result);
+                },
+                error: function (err) {
+                    alert(JSON.stringify(err));
+                }
+            });
+        }
+
+        function put(id, nome){
+            $.ajax({
+                url: "https://localhost:5001/api/customers/" + id,
+                type: "PUT",
+                data: JSON.stringify({
+                    id: id,
+                    nome: nome
+                }),
+                dataType: "json",
+                contentType: "application/json",
+                success: function (result) {
+                    alert(result);
+                },
+                error: function (err) {
+                    alert(JSON.stringify(err));
+                }
+            });
+        }
+
+        function del(id){
+            $.ajax({
+                url: "https://localhost:5001/api/customers/" + id,
+                type: "DELETE",
+                contentType: "application/json",
+                success: function (result) {
+                    alert(result);
+                },
+                error: function (err) {
+                    alert(JSON.stringify(err));
+                }
+            });
+        }
+
+        function loadSerie(name){
+            $.ajax({
+                url: "https://localhost:5001/api/series/" + name,
+                type: "GET",
+                contentType: "application/json",
+                success: function (result) {
+                    fillTableSeries(JSON.parse(result))
+                },
+                error: function (err) {
+                    alert(JSON.stringify(err));
+                }
+            });
+        
+        
+        
+        
+        }
+
+        function forecast(name){
+            $.ajax({
+                url: "https://localhost:5001/api/forecasting/" + name,
+                type: "GET",
+                contentType: "application/json",
+                success: function (result) {
+                    fillTableForecasting(JSON.parse(result))
+                },
+                error: function (err) {
+                    alert(JSON.stringify(err));
+                }
+            });
+        }
+
+        function optimization(nome){
+            var table = document.getElementById("table");
+            table.innerHTML = "";
+            $.ajax({
+                url: "https://localhost:5001/api/optimization/" + nome + "/gap10",
+                type: "GET",
+                contentType: "application/json",
+                success: function (result) {
+                    fillTable(JSON.parse(result),3);
+                },
+                error: function (err) {
+                    alert(JSON.stringify(err));
+                }
+            });
+            $.ajax({
+                url: "https://localhost:5001/api/optimization/" + nome + "/SimulatedAnnealing",
+                type: "GET",
+                contentType: "application/json",
+                success: function (result) {
+                    fillTable(JSON.parse(result),3);
+                },
+                error: function (err) {
+                    alert(JSON.stringify(err));
+                }
+            });
+            $.ajax({
+                url: "https://localhost:5001/api/optimization/" + nome + "/TabuSearch",
+                type: "GET",
+                contentType: "application/json",
+                success: function (result) {
+                    fillTable(JSON.parse(result),3);
+                },
+                error: function (err) {
+                    alert(JSON.stringify(err));
+                }
+            });
+        }
+
+        function readResult(elem) {
+            alert(elem)
+        }
+        function fillTable(values, cellPerRow = 10) {
+        
+        var row;
+        for (let index = 0; index < values.length; index++) {
+            if(index%cellPerRow == 0) row = table.insertRow(-1);
+            var cell = row.insertCell(-1);
+            cell.innerHTML = values[index];
+        }
+    }
+
+        function fillTableSeries(values) {
+
+            var ctx = document.getElementById("myChart").getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: getIndeces(values),
+                    datasets: [{
+                        label: 'Time Series',
+                        data: values,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255,99,132,1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }
+                }
+            });
+            
+        }
+
+        function fillTableForecasting(values) {
+            var value1 = values[0];
+            var value2 = values[1];
+            var ctx = document.getElementById("myChart").getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: getIndeces(value1),
+                    datasets: [{
+                        label: 'Time Series',
+                        data: value2,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255,99,132,1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }, 
+                    {
+                        label: 'Time Series 2',
+                        data: value1,
+                        backgroundColor: [
+                            'rgba(0, 99, 132, 0.2)',
+                            'rgba(0, 162, 235, 0.2)',
+                            'rgba(0, 206, 86, 0.2)',
+                            'rgba(0, 192, 192, 0.2)',
+                            'rgba(0, 102, 255, 0.2)',
+                            'rgba(0, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(0,99,132,1)',
+                            'rgba(0, 162, 235, 1)',
+                            'rgba(0, 206, 86, 1)',
+                            'rgba(0, 192, 192, 1)',
+                            'rgba(0, 102, 255, 1)',
+                            'rgba(0, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }
+                }
+            });
+
+        }
+
+        function getIndeces(list) {
+            return list.map( function(val, key) { return key ; });
+        }
+        
+    </script>
+</body>
+</html>
