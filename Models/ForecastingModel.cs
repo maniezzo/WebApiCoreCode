@@ -31,7 +31,7 @@ namespace WebApiCoreCode
             double max = -1; 
 
             
-            for(int shifts = 1; shifts <= 20; shifts++) {
+            for(int shifts = 1; shifts <= 60; shifts++) {
                 double[] arr = this.Serie.ToArray();
                 Array.Copy(arr, 0, arr, shifts, arr.Length - shifts);
                 Array.Clear(arr, 0, shifts);
@@ -44,7 +44,6 @@ namespace WebApiCoreCode
                 }
             }
             Console.WriteLine("pearson: " + max + " seasonalityRate: " + seasonalityRate);
-
             return this;
         }
         
