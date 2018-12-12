@@ -27,7 +27,11 @@ namespace WebAPI.Controllers
         public ActionResult<string> Get()
         {
             return JsonConvert.SerializeObject(
-                System.IO.Directory.GetFiles(@"problems\", "*.json").Select(n => n.Replace(@"problems\",""))
+                System.IO.Directory.GetFiles(@"problems", "*.json")
+                    .Select(n => n
+                        .Replace(@"problems/","")
+                        .Replace(@"problems\","")
+                    )
             );
         }
     }
