@@ -17,7 +17,7 @@ namespace WebAPI.Controllers
         [HttpGet("{name}")]
         public ActionResult<string> Get(string name)
         {
-            return JsonConvert.SerializeObject(controller.doForecasting(name).Select(x => x.ToString("0")).ToArray());
+            return JsonConvert.SerializeObject(controller.doForecasting(name).Select(x => x.Select(y => y.ToString("0")).ToArray()));
         }
     }
 }

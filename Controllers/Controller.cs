@@ -82,10 +82,9 @@ namespace WebApiCoreCode
             return series;
         }
 
-        public IEnumerable<double> doForecasting(string name) 
+        public IEnumerable<IEnumerable<double>> doForecasting(string name) 
         {
-            
-            this.GetSeries(name);
+            List<double> series = this.GetSeries(name).ToList();
 
             this.forecastingModel
                 .findSeasonality()
@@ -95,7 +94,13 @@ namespace WebApiCoreCode
                 .seasonAdjustement()
                 .calculateTrend()
                 .forecast();
-            return this.forecastingModel.ForecastedData;
+
+            List<double> forecast = this.forecastingModel.ForecastedData.TakeLast(this.forecastingModel.seasonalityRate).ToList();
+            List<List<double>> result = new List<List<double>>();
+            result.Add(series.Take(series.Count - this.forecastingModel.seasonalityRate).Concat(forecast).ToList());
+            result.Add(series.Take(series.Count - this.forecastingModel.seasonalityRate).ToList());
+            
+            return result;
         }
 
         public float[] GetAvgAndVariance()
