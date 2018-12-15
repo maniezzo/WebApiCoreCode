@@ -8,7 +8,7 @@ namespace WebApiCoreCode
 {
     public class ForecastingModel
     {
-        private int seasonalityRate;
+        public int seasonalityRate;
         private List<double> Serie {get; set;}
         public List<double> Baseline {get; set;}
         public List<double> Seasonality {get; set;}
@@ -44,7 +44,6 @@ namespace WebApiCoreCode
                 }
             }
             Console.WriteLine("pearson: " + max + " seasonalityRate: " + seasonalityRate);
-
             return this;
         }
         

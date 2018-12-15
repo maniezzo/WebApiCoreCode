@@ -82,10 +82,9 @@ namespace WebApiCoreCode
             return series;
         }
 
-        public IEnumerable<double> doForecasting(string name) 
+        public IEnumerable<IEnumerable<double>> doForecasting(string name) 
         {
-            
-            this.GetSeries(name);
+            List<double> series = this.GetSeries(name).ToList();
 
             this.forecastingModel
                 .findSeasonality()
@@ -95,7 +94,13 @@ namespace WebApiCoreCode
                 .seasonAdjustement()
                 .calculateTrend()
                 .forecast();
-            return this.forecastingModel.ForecastedData;
+
+            List<double> forecast = this.forecastingModel.ForecastedData.TakeLast(this.forecastingModel.seasonalityRate).ToList();
+            List<List<double>> result = new List<List<double>>();
+            result.Add(series.Take(series.Count - this.forecastingModel.seasonalityRate).Concat(forecast).ToList());
+            result.Add(series.Take(series.Count - this.forecastingModel.seasonalityRate).ToList());
+            
+            return result;
         }
 
         public float[] GetAvgAndVariance()
@@ -118,26 +123,36 @@ namespace WebApiCoreCode
             return model.GetCustomerName(connString, provider, id);
         }
 
-        public string solveGAP(string name)
+        public string solveGAP(string name, string algoritm)
         {
-            GeneralizedAssignmentProblem problem = optimizationModel.readJson("problems/"+name);
-
+            optimizationModel.readJson("problems/" + name);
             int[] sol = optimizationModel.findSol();
 
-            try 
+            if (optimizationModel.isSolValid(sol)) 
             {
-                optimizationModel.checkSol(sol);
-                string s = optimizationModel.writeSol(sol);
-                int[] sol2 = optimizationModel.Gap10(sol);
-                s += '\n' + optimizationModel.writeSol(sol2);
-                int[] sol3 = optimizationModel.SimulatedAnnealing(sol,1000);
-                s += '\n' + optimizationModel.writeSol(sol3);
-                return s;
-
+                switch (algoritm)
+                {
+                    case "gap10":
+                        return  algoritm + " " + optimizationModel.writeSol(optimizationModel.Gap10(sol));
+                    case "SimulatedAnnealing":
+                            int[] sol3 = null;
+                            for (int i = 0; i < 5; i++)
+                            {
+                                int[] sol3tmp = optimizationModel.SimulatedAnnealing(sol);
+                                if(i==0) sol3= sol3tmp;
+                                else{
+                                    sol3= optimizationModel.getCost(sol3)> optimizationModel.getCost(sol3tmp)?sol3tmp: sol3;
+                                }
+                            }
+                            return  algoritm + " " + optimizationModel.writeSol(sol3);
+                    case "TabuSearch":
+                        return  algoritm + " " + optimizationModel.writeSol(optimizationModel.TabuSearch2(sol));
+                    default: return "";
+                 }
             } 
-            catch (Exception e)
+            else
             {
-                return e.Message +'\n' + String.Join(',', sol);
+                return "No intial solution found." ;
             }
         }
     }

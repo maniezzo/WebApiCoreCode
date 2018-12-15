@@ -9,9 +9,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
     <script src="Chart.bundle.js"></script>
+    <link rel="manifest" href="manifest.json">
 
 </head>
-<body>
+<body onload="startup()">
     <div class="container">
         <div class="row" style="margin:5px;">
             <div class="col-sm-8">
@@ -62,7 +63,12 @@
     
         <div class="row" style="margin:5px;">
             <div class="col-sm-8">
-                <input id="nomeSerie" class="form-control" type="text" placeholder="name of serie to load">
+                <select id="nomeSerie" class="form-control">
+                    <option>esempio</option>
+                    <option>esempio2</option>
+                    <option>jewelry</option>
+                    <option>Passengers</option>
+                </select>
             </div>
             <div class="col-sm-4">
                 <button class="btn btn-block btn-primary" onclick="loadSerie(document.getElementById('nomeSerie').value);">Get Serie</button>
@@ -70,7 +76,12 @@
         </div>
         <div class="row" style="margin:5px;">
             <div class="col-sm-8">
-                <input id="nomeFore" class="form-control" type="text" placeholder="name of serie to forecast">
+                <select id="nomeFore" class="form-control">
+                    <option>esempio</option>
+                    <option>esempio2</option>
+                    <option>jewelry</option>
+                    <option>Passengers</option>
+                </select>
             </div>
             <div class="col-sm-4">
                 <button class="btn btn-block btn-primary" onclick="forecast(document.getElementById('nomeFore').value);">Forecast</button>
@@ -79,7 +90,10 @@
         
         <div class="row" style="margin:5px;">
                 <div class="col-sm-8">
-                    <input id="nomeProblema" class="form-control" type="text" placeholder="name of problem to load">
+                    <select id="nomeProblema" class="form-control">
+                        <!--caricati al caricamento della pagina
+                        -->
+                    </select>
                 </div>
                 <div class="col-sm-4">
                     <button class="btn btn-block btn-primary" onclick="optimization(document.getElementById('nomeProblema').value);">Optimization</button>
@@ -93,6 +107,39 @@
     <canvas id="myChart" width="400" height="400"></canvas>
 
     <script>
+        function startup() {
+            if (navigator.serviceWorker.controller) {
+                console.log('[PWA Builder] active service worker found, no need to register')
+            } else {
+                //Register the ServiceWorker
+                navigator.serviceWorker.register('pwabuilder-sw.js', {
+                    scope: './'
+                }).then(function(reg) {
+                    console.log('Service worker has been registered for scope:'+ reg.scope);
+                });
+            }
+
+            populateProblems();
+        }
+
+        function populateProblems() {
+            $.ajax({
+                url: "https://localhost:5001/api/optimization/problems",
+                type: "GET",
+                contentType: "application/json",
+                success: function (result) {
+                    JSON.parse(result).forEach(p => {
+                        var x = document.createElement("option");
+                        x.appendChild(document.createTextNode(p));
+                        document.getElementById("nomeProblema").appendChild(x);
+                    });
+                },
+                error: function (err) {
+                    alert(JSON.stringify(err));
+                }
+            });
+        }
+
         function find(id){
             $.ajax({
                 url: "https://localhost:5001/api/customers/" + id,
@@ -165,7 +212,7 @@
                 type: "GET",
                 contentType: "application/json",
                 success: function (result) {
-                    fillTable(JSON.parse(result))
+                    fillTableSeries(JSON.parse(result))
                 },
                 error: function (err) {
                     alert(JSON.stringify(err));
@@ -183,7 +230,7 @@
                 type: "GET",
                 contentType: "application/json",
                 success: function (result) {
-                    fillTable(JSON.parse(result))
+                    fillTableForecasting(JSON.parse(result))
                 },
                 error: function (err) {
                     alert(JSON.stringify(err));
@@ -192,12 +239,36 @@
         }
 
         function optimization(nome){
+            var table = document.getElementById("table");
+            table.innerHTML = "";
             $.ajax({
-                url: "https://localhost:5001/api/optimization/" + nome,
+                url: "https://localhost:5001/api/optimization/" + nome + "/gap10",
                 type: "GET",
                 contentType: "application/json",
                 success: function (result) {
-                    readResult(result);
+                    fillTable(JSON.parse(result),3);
+                },
+                error: function (err) {
+                    alert(JSON.stringify(err));
+                }
+            });
+            $.ajax({
+                url: "https://localhost:5001/api/optimization/" + nome + "/SimulatedAnnealing",
+                type: "GET",
+                contentType: "application/json",
+                success: function (result) {
+                    fillTable(JSON.parse(result),3);
+                },
+                error: function (err) {
+                    alert(JSON.stringify(err));
+                }
+            });
+            $.ajax({
+                url: "https://localhost:5001/api/optimization/" + nome + "/TabuSearch",
+                type: "GET",
+                contentType: "application/json",
+                success: function (result) {
+                    fillTable(JSON.parse(result),3);
                 },
                 error: function (err) {
                     alert(JSON.stringify(err));
@@ -208,17 +279,17 @@
         function readResult(elem) {
             alert(elem)
         }
-        function fillTable(values) {
-            /* var table = document.getElementById("table");
-            table.innerHTML = "";
+        function fillTable(values, cellPerRow = 10) {
+        
+        var row;
+        for (let index = 0; index < values.length; index++) {
+            if(index%cellPerRow == 0) row = table.insertRow(-1);
+            var cell = row.insertCell(-1);
+            cell.innerHTML = values[index];
+        }
+    }
 
-            var cellPerRow = 10;
-            var row;
-            for (let index = 0; index < values.length; index++) {
-                if(index%cellPerRow == 0) row = table.insertRow(-1);
-                var cell = row.insertCell(-1);
-                cell.innerHTML = values[index];
-            } */
+        function fillTableSeries(values) {
 
             var ctx = document.getElementById("myChart").getContext('2d');
             var myChart = new Chart(ctx, {
@@ -258,6 +329,70 @@
                 }
             });
             
+        }
+
+        function fillTableForecasting(values) {
+            var value1 = values[0];
+            var value2 = values[1];
+            var ctx = document.getElementById("myChart").getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: getIndeces(value1),
+                    datasets: [{
+                        label: 'Time Series',
+                        data: value2,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255,99,132,1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }, 
+                    {
+                        label: 'Time Series 2',
+                        data: value1,
+                        backgroundColor: [
+                            'rgba(0, 99, 132, 0.2)',
+                            'rgba(0, 162, 235, 0.2)',
+                            'rgba(0, 206, 86, 0.2)',
+                            'rgba(0, 192, 192, 0.2)',
+                            'rgba(0, 102, 255, 0.2)',
+                            'rgba(0, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(0,99,132,1)',
+                            'rgba(0, 162, 235, 1)',
+                            'rgba(0, 206, 86, 1)',
+                            'rgba(0, 192, 192, 1)',
+                            'rgba(0, 102, 255, 1)',
+                            'rgba(0, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }
+                }
+            });
+
         }
 
         function getIndeces(list) {

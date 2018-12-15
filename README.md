@@ -5,7 +5,7 @@ Classroom project for business analytics: visual studio code access to webapi ba
 * make sure you have installed [visual studio code](https://code.visualstudio.com/) (and [.NET Core SDK](https://www.microsoft.com/net/download))
 * add the [C# plugin](https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp)
 
-## Steps to create the project from scratch:
+## FIRST STEP - Create the project from scratch
 * open a terminal:
     ```sh
     $ mkdir myproject
@@ -39,6 +39,39 @@ In our case:
 
 In the Controller constructor we check the current field of settings and apply the chosen method.
 
+
+## SECOND STEP - Create a new WebAPI project and merge it with first project
+After the creation and the editing of first project, we have worked with a second project for the realization of a Web API project. In Visual Studio Code there isn't the possibility to create immediately a new project (c#/web/ASP.NET Web Application) like in Visual Studio.  
+* To create a new WebAPI project in Visul Studio Code, open a terminal and digits:
+    ``` sh
+    $ dotnet new webapi -o projectName
+    $ code -r projectName
+    ```
+After this, we have merge the first project into this WebAPI project and we have worked on this.
+
+### CORS problems
+We have created an index.html file but when we launched it in localhost, we have encountered some problems. The origin of this problem is CORS:
+* CORS definition: Cross-origin resource sharing (CORS) is a mechanism that allows restricted resources on a web page to be requested from another domain outside the domain from which the first resource was served. 
+A web page may freely embed cross-origin images, stylesheets, scripts, iframes, and videos. Certain "cross-domain" requests, notably Ajax requests, are forbidden by default by the same-origin security policy.
+
+In order to resolve this problem, we have added some lines of code in file Startup.cs. In particular:
+* At line 28:
+    ``` sh
+    services.AddCors(options => options.AddPolicy("AllowAll", builder => 
+                builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+    ```
+* At line 46:
+    ``` sh
+    app.UseCors("AllowAll");
+    ```
+
+### Controllers' managing
+We have created a controller for every subpart of project (like CustomersController, ForecastingController, OptimizationController etc).
+Every controller has a path with the name of the class (e.g.: ForecastingController has a path api/forecasting) and in his class we have inserted the method GET, PUT, POST and DELETE (if necessary).
+
+
+### Certificates PWA problems
+We have added support for PWA (Progressive Web App) but we have encountered a problem with certificates. In particular, the problem arise with browser Google Chrome. To fix this problem, we opened the certificate from browser and we set the security level in "always trusted".
 
 ## Extras
 
