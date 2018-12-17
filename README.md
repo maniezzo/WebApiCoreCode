@@ -70,6 +70,9 @@ We have created a controller for every subpart of project (like CustomersControl
 Every controller has a path with the name of the class (e.g.: ForecastingController has a path api/forecasting) and in his class we have inserted the method GET, PUT, POST and DELETE (if necessary).
 
 
+### Certificates PWA problems
+We have added support for PWA (Progressive Web App) but we have encountered a problem with certificates. In particular, the problem arise with browser Google Chrome. To fix this problem, we opened the certificate from browser and we set the security level in "always trusted".
+
 ## Extras
 
 ### Run SqlServer on Unix OS
