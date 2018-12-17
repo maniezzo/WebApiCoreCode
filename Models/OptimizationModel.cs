@@ -95,32 +95,30 @@ namespace WebApiCoreCode
         }
         public int[] Gap10(int[] sol)
         {
+ 
             int[] capLeft = getCapLeft(sol);
-            int[] optSol = (int[])sol.Clone();
-            int optCost = getCost(sol);
+            //int[] optSol = (int[])sol.Clone();
+            int Cost = getCost(sol);
+            
             for(int j=0;j<problem.numcli;j++)
             {   
                 for(int i = 0;i<problem.numserv;i++)
                 {  
-                    if(optSol[j]==i) continue;
-                    int[] tmpsol = (int[])optSol.Clone(); 
+                    if(sol[j]==i) continue;
+                    int[] tmpsol = (int[])sol.Clone(); 
                     tmpsol[j]= i;
-                    
                     if(capLeft[i] >= problem.req[i,j])
                     {
-                        int actualCost = optCost - problem.cost[optSol[j],j] + problem.cost[i,j];
-                        
-                        if(actualCost < optCost){
-                            capLeft[optSol[j]] += problem.req[optSol[j],j];
+                        int actualCost = Cost - problem.cost[sol[j],j] + problem.cost[i,j];
+                        if(actualCost < Cost){
+                            capLeft[sol[j]] += problem.req[sol[j],j];
                             capLeft[i] -= problem.req[i,j];
-
-                            optSol = tmpsol;
-                            optCost = actualCost;
+                            return Gap10(tmpsol);
                         }
                     }
                 }
             }       
-            return optSol;
+            return sol;
         }
         public int[] SimulatedAnnealing(int[] sol)
         {

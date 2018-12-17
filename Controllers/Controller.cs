@@ -88,7 +88,7 @@ namespace WebApiCoreCode
 
             this.forecastingModel
                 .findSeasonality()
-                .applyMA()
+                .applyMA()//MA and Baseline
                 .calculateSeasonality()
                 .deleteNoise()
                 .seasonAdjustement()
