@@ -75,7 +75,7 @@
             </div>
         </div>
         <div class="row" style="margin:5px;">
-            <div class="col-sm-8">
+            <div class="col-sm-4">
                 <select id="nomeFore" class="form-control">
                     <option>esempio</option>
                     <option>esempio2</option>
@@ -84,7 +84,13 @@
                 </select>
             </div>
             <div class="col-sm-4">
-                <button class="btn btn-block btn-primary" onclick="forecast(document.getElementById('nomeFore').value);">Forecast</button>
+                <select id="index" class="form-control">
+                    <option>Pearson</option>
+                    <option>Spearman</option>
+                </select>
+            </div>
+            <div class="col-sm-4">
+                <button class="btn btn-block btn-primary" onclick="forecast(document.getElementById('nomeFore').value, document.getElementById('index').value);">Forecast</button>
             </div>
         </div>
         
@@ -224,9 +230,9 @@
         
         }
 
-        function forecast(name){
+        function forecast(name, index){
             $.ajax({
-                url: "https://localhost:5001/api/forecasting/" + name,
+                url: "https://localhost:5001/api/forecasting/" + name + "/" + index,
                 type: "GET",
                 contentType: "application/json",
                 success: function (result) {
@@ -334,6 +340,9 @@
             var value1 = values[0];
             var value2 = values[1];
             var ctx = document.getElementById("myChart").getContext('2d');
+            if(myChart) {
+                myChart.destroy();
+            }
             var myChart = new Chart(ctx, {
                 type: 'line',
                 data: {

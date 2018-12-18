@@ -23,16 +23,33 @@ namespace WebApiCoreCode
         {
             this.Serie = serie.ToList();
         }
-        public ForecastingModel findSeasonality() 
+        public ForecastingModel findSeasonality(Boolean isPearson) 
         {
-            double[] arrSource = this.Serie.ToArray();
+            double[] arrSource;
+            double[] arrSource2;
+
+            if (isPearson) {
+                arrSource = this.Serie.ToArray();
+            } else {
+                arrSource2 = this.Serie.ToArray();
+                arrSource = new double[arrSource2.Length - 1];
+                for (int i = 0; i < arrSource2.Length; i++) {
+                    arrSource2[i] = Math.Log(arrSource2[i]);
+                    if (i >= 1) {
+                        arrSource[i-1] = arrSource2[i] - arrSource2[i - 1];
+                    }
+                } 
+            }
             double pearson;  
             double max = -1; 
-            for(int shifts = 1; shifts <= 20; shifts++) {
+            for(int shifts = 1; shifts <= 19; shifts++) {
                 double[] arr = new double[arrSource.Length];
                 Array.Copy(arrSource, 0, arr, shifts, arr.Length - shifts);
-                pearson = StatisticsModel.Pearson(arrSource,arr);
-                
+                if (isPearson) {
+                    pearson = StatisticsModel.Pearson(arrSource,arr);
+                } else {
+                    pearson = RankCorrelation.ComputeRankCorrelation(arrSource, arr);
+                }
                 if (pearson > max) 
                 {
                     seasonalityRate = shifts;
