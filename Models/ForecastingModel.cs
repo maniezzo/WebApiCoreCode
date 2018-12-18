@@ -32,6 +32,7 @@ namespace WebApiCoreCode
                 double[] arr = new double[arrSource.Length];
                 Array.Copy(arrSource, 0, arr, shifts, arr.Length - shifts);
                 pearson = StatisticsModel.Pearson(arrSource,arr);
+                
                 if (pearson > max) 
                 {
                     seasonalityRate = shifts;
