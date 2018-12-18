@@ -82,13 +82,13 @@ namespace WebApiCoreCode
             return series;
         }
 
-        public IEnumerable<IEnumerable<double>> doForecasting(string name) 
+        public IEnumerable<IEnumerable<double>> doForecasting(string name, Boolean isPearson) 
         {
             List<double> series = this.GetSeries(name).ToList();
 
             this.forecastingModel
-                .findSeasonality()
-                .applyMA()
+                .findSeasonality(isPearson)
+                .applyMA()//MA and Baseline
                 .calculateSeasonality()
                 .deleteNoise()
                 .seasonAdjustement()
@@ -146,7 +146,7 @@ namespace WebApiCoreCode
                             }
                             return  algoritm + " " + optimizationModel.writeSol(sol3);
                     case "TabuSearch":
-                        return  algoritm + " " + optimizationModel.writeSol(optimizationModel.TabuSearch2(sol));
+                        return  algoritm + " " + optimizationModel.writeSol(optimizationModel.TabuSearch(sol));
                     default: return "";
                  }
             } 

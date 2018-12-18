@@ -95,32 +95,30 @@ namespace WebApiCoreCode
         }
         public int[] Gap10(int[] sol)
         {
+ 
             int[] capLeft = getCapLeft(sol);
-            int[] optSol = (int[])sol.Clone();
-            int optCost = getCost(sol);
+            //int[] optSol = (int[])sol.Clone();
+            int Cost = getCost(sol);
+            
             for(int j=0;j<problem.numcli;j++)
             {   
                 for(int i = 0;i<problem.numserv;i++)
                 {  
-                    if(optSol[j]==i) continue;
-                    int[] tmpsol = (int[])optSol.Clone(); 
+                    if(sol[j]==i) continue;
+                    int[] tmpsol = (int[])sol.Clone(); 
                     tmpsol[j]= i;
-                    
                     if(capLeft[i] >= problem.req[i,j])
                     {
-                        int actualCost = optCost - problem.cost[optSol[j],j] + problem.cost[i,j];
-                        
-                        if(actualCost < optCost){
-                            capLeft[optSol[j]] += problem.req[optSol[j],j];
+                        int actualCost = Cost - problem.cost[sol[j],j] + problem.cost[i,j];
+                        if(actualCost < Cost){
+                            capLeft[sol[j]] += problem.req[sol[j],j];
                             capLeft[i] -= problem.req[i,j];
-
-                            optSol = tmpsol;
-                            optCost = actualCost;
+                            return Gap10(tmpsol);
                         }
                     }
                 }
             }       
-            return optSol;
+            return sol;
         }
         public int[] SimulatedAnnealing(int[] sol)
         {
@@ -183,77 +181,14 @@ namespace WebApiCoreCode
             return optSol;
         }
 
-        /* public int[] TabuSearch(int[] sol, int tabuTenure, int maxIteration, int[,] tabuList = null, int actualIteration = 0)
-        {
-
-            if (tabuList == null) 
-            {
-                tabuList = initializeTabuList();
-            }
-
-                        
-            int[] lessWorseSol = null;
-            int lessWorseCost = Int32.MaxValue;
-
-             for(int j=0;j<problem.numcli;j++)
-            {   
-                for(int i = 0;i<problem.numserv;i++)
-                {  
-                    if(sol[j] == i) continue;
-
-                    int[] tmpsol = (int[])sol.Clone(); 
-                    tmpsol[j]= i;
-                    try
-                    {
-                        int cost = checkSol(tmpsol);
-                        int oldcost = checkSol(sol);
-                       
-
-                        if (cost < oldcost && tabuList[j,i] <= actualIteration){
-                            actualIteration++;
-                            if (actualIteration == maxIteration) {
-                                break;
-                            }
-                            tabuList[j,i] = actualIteration + tabuTenure;
-                            return TabuSearch(tmpsol, tabuTenure, maxIteration, tabuList, actualIteration);
-                        } else if (tabuList[j,i] <= actualIteration) {
-                            if (lessWorseSol == null || cost < lessWorseCost) {
-                                lessWorseSol = tmpsol;
-                            } 
-                        }
-                    }
-                    catch
-                    {}
-                }
-            }   
-
-            if (maxIteration == actualIteration) {
-                 return sol;
-            } else {
-                actualIteration++;
-                return TabuSearch(lessWorseSol, tabuTenure, maxIteration, tabuList, actualIteration);
-            }
-        } */
-
         public int[,] initializeTabuList()
          {
              int[,] tabuList = new int[problem.numserv, problem.numcli];
 
-            /* riempire la tabuList di tutti 0 */
-            /* for(int j=0;j<problem.numcli;j++)
-            {   
-                for(int i = 0;i<problem.numserv;i++)
-                {
-                    tabuList[i,j] = 0;
-                }
-            }*/
-            
-            //sono già a 0 se non si fa nulla
-
             return tabuList; 
          }
 
-        public int[] TabuSearch2(int[] sol, int tabuTenure=10, int maxIteration=1000, int[] bestSolution = null, int[,] tabuList = null, int currentIteration = 0)
+        public int[] TabuSearch(int[] sol, int tabuTenure=10, int maxIteration=1000, int[] bestSolution = null, int[,] tabuList = null, int currentIteration = 0)
         {
             //bestSol = soluzione migliore nel vicinato
             //bestCurrentSolution = soluzione migliore in assoluto
@@ -314,7 +249,7 @@ namespace WebApiCoreCode
                 bestSolution = neighbourhoodBestSol;
             }
 
-            return TabuSearch2(neighbourhoodBestSol, tabuTenure, maxIteration, bestSolution, tabuList, currentIteration + 1);
+            return TabuSearch(neighbourhoodBestSol, tabuTenure, maxIteration, bestSolution, tabuList, currentIteration + 1);
             
         }
     }

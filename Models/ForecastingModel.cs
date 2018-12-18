@@ -23,20 +23,33 @@ namespace WebApiCoreCode
         {
             this.Serie = serie.ToList();
         }
-
-        public ForecastingModel findSeasonality() 
+        public ForecastingModel findSeasonality(Boolean isPearson) 
         {
-            double[] arrSource = this.Serie.ToArray();
+            double[] arrSource;
+            double[] arrSource2;
+
+            if (isPearson) {
+                arrSource = this.Serie.ToArray();
+            } else {
+                arrSource2 = this.Serie.ToArray();
+                arrSource = new double[arrSource2.Length - 1];
+                for (int i = 0; i < arrSource2.Length; i++) {
+                    arrSource2[i] = Math.Log(arrSource2[i]);
+                    if (i >= 1) {
+                        arrSource[i-1] = arrSource2[i] - arrSource2[i - 1];
+                    }
+                } 
+            }
             double pearson;  
             double max = -1; 
-
-            
-            for(int shifts = 1; shifts <= 20; shifts++) {
-                double[] arr = this.Serie.ToArray();
-                Array.Copy(arr, 0, arr, shifts, arr.Length - shifts);
-                Array.Clear(arr, 0, shifts);
-                
-                pearson = StatisticsModel.Pearson(arrSource.Select(x => Convert.ToDouble(x)).ToList(), arr.Select(x => Convert.ToDouble(x)).ToList());
+            for(int shifts = 1; shifts <= 19; shifts++) {
+                double[] arr = new double[arrSource.Length];
+                Array.Copy(arrSource, 0, arr, shifts, arr.Length - shifts);
+                if (isPearson) {
+                    pearson = StatisticsModel.Pearson(arrSource,arr);
+                } else {
+                    pearson = RankCorrelation.ComputeRankCorrelation(arrSource, arr);
+                }
                 if (pearson > max) 
                 {
                     seasonalityRate = shifts;
@@ -46,7 +59,7 @@ namespace WebApiCoreCode
             Console.WriteLine("pearson: " + max + " seasonalityRate: " + seasonalityRate);
             return this;
         }
-        
+        //media mobile
         public ForecastingModel applyMA() 
         {
             int startIndex = 0;
@@ -124,29 +137,23 @@ namespace WebApiCoreCode
         public ForecastingModel seasonAdjustement() 
         {
             this.SeasonallyAdjustedData = new List<double>();
-            
-
             for(int i = 0; i < this.Seasons.Count; i++) 
             {   
                 this.Seasons[i] = this.SeasonalityWithoutNoise.ElementAt((int)(this.Seasons.ElementAt(i)));
             }
-    
-
             for(int i = 0; i < this.Serie.Count - seasonalityRate; i++) 
             {
                 this.SeasonallyAdjustedData.Add(this.Serie.ElementAt(i) / this.Seasons.ElementAt(i));
             }
-            
             return this;
         }
-
         public ForecastingModel calculateTrend() 
         {
             this.Trend = new List<double>();
             List<Tuple<double, double>> LeastSquaresSerie = new List<Tuple<double, double>>();
-            for (int i = 0; i < this.Serie.Count; i++) 
+            for (int i = 0; i < this.SeasonallyAdjustedData.Count; i++) 
             {
-                LeastSquaresSerie.Add(new Tuple<double, double>(i, this.Serie.ElementAt(i)));
+                LeastSquaresSerie.Add(new Tuple<double, double>(i+1, this.SeasonallyAdjustedData.ElementAt(i)));
             }
             //y = mx + b
             LeastSquaresParameters = StatisticsModel.LeastSquares(LeastSquaresSerie);
